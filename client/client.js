@@ -1,89 +1,117 @@
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
+
 const SERVER_URL = "wss://k22b.onrender.com";
+
 // ================== STATE ==================
 let socket;
 let socketReady = false;
+
 let pc;
 let channel;
 let channelReady = false;
+
 let isHost = false;
 let playerIndex = 0;
+
 const players = [];
 const dot = { x: 295, y: 295 };
 
 // ================== JOIN ==================
 function join(room, password) {
 	console.log("Connecting WebSocket...");
+
 	socket = new WebSocket(SERVER_URL);
+
 	socket.onopen = () => {
 		socketReady = true;
 		console.log("WebSocket open");
-		socket.send(JSON.stringify({type: "join", room, password}));
+		socket.send(JSON.stringify({ type: "join", room, password }));
 	};
+
 	socket.onerror = (e) => {
 		console.error("WebSocket error", e);
 	};
+
 	socket.onmessage = async (e) => {
 		console.log("WS message:", e.data);
 		const data = JSON.parse(e.data);
-    
-		if (data.type === "peer-joined" && isHost) {
-		console.log("Peer joined — creating offer");
-		const offer = await pc.createOffer();
-		await pc.setLocalDescription(offer);
-		socket.send(JSON.stringify({type: "signal",	signal: offer}));
 
+		// ===== JOINED =====
 		if (data.type === "joined") {
 			isHost = data.host;
 			playerIndex = data.index;
 			console.log("Joined room | Host:", isHost);
 			startWebRTC();
+			return;
 		}
-		if (data.type === "signal" && data.signal.type === "ready-for-offer" && isHost) {
-			console.log("Peer is ready — creating offer");
-			const offer = await pc.createOffer();
-			await pc.setLocalDescription(offer);
-			socket.send(JSON.stringify({type: "signal", signal: offer}));
+
+		// ===== PEER JOINED =====
+		if (data.type === "peer-joined") {
+			console.log("Peer joined");
+			return;
 		}
+
+		// ===== SIGNAL =====
 		if (data.type === "signal") {
-			console.log("Signal received");
-			if (data.signal.type === "offer") {
-				await pc.setRemoteDescription(data.signal);
+			const signal = data.signal;
+
+			if (signal.type === "ready-for-offer" && isHost) {
+				console.log("Creating offer");
+				const offer = await pc.createOffer();
+				await pc.setLocalDescription(offer);
+				socket.send(JSON.stringify({ type: "signal", signal: offer }));
+				return;
+			}
+
+			if (signal.type === "offer") {
+				console.log("Received offer");
+				await pc.setRemoteDescription(signal);
 				const answer = await pc.createAnswer();
 				await pc.setLocalDescription(answer);
 				socket.send(JSON.stringify({ type: "signal", signal: answer }));
+				return;
 			}
-			if (data.signal.type === "answer") {
-				await pc.setRemoteDescription(data.signal);
+
+			if (signal.type === "answer") {
+				console.log("Received answer");
+				await pc.setRemoteDescription(signal);
+				return;
 			}
-			if (data.signal.candidate) {
-				await pc.addIceCandidate(data.signal);
+
+			if (signal.candidate) {
+				console.log("Received ICE");
+				await pc.addIceCandidate(signal);
 			}
 		}
-	}
 	};
 }
 
 // ================== WEBRTC ==================
 function startWebRTC() {
 	console.log("Starting WebRTC");
+
 	pc = new RTCPeerConnection();
+
 	pc.onicecandidate = (e) => {
 		if (e.candidate && socketReady) {
-		console.log("Sending ICE candidate");
-		socket.send(JSON.stringify({type: "signal", signal: e.candidate}));
+			socket.send(JSON.stringify({
+				type: "signal",
+				signal: e.candidate
+			}));
 		}
 	};
+
 	pc.onconnectionstatechange = () => {
 		console.log("PC state:", pc.connectionState);
 	};
 
 	if (isHost) {
 		channel = pc.createDataChannel("game");
+
 		channel.onopen = () => {
-			channelReady = true;
 			console.log("DataChannel open (host)");
+			channelReady = true;
 			initGame();
 		};
 
@@ -93,13 +121,20 @@ function startWebRTC() {
 		pc.ondatachannel = (e) => {
 			channel = e.channel;
 			console.log("DataChannel received");
+
 			channel.onopen = () => {
-				channelReady = true;
 				console.log("DataChannel open (client)");
+				channelReady = true;
 			};
+
 			channel.onmessage = onMessage;
 		};
-		socket.send(JSON.stringify({type: "signal",	signal: { type: "ready-for-offer" }}));
+
+		// tell host we are ready
+		socket.send(JSON.stringify({
+			type: "signal",
+			signal: { type: "ready-for-offer" }
+		}));
 	}
 }
 
@@ -116,6 +151,7 @@ function initGame() {
 	for (let i = 0; i < 4; i++) {
 		players.push({ ...corners[i] });
 	}
+
 	console.log("Game initialized");
 }
 
@@ -130,8 +166,8 @@ function onMessage(e) {
 		checkWin();
 
 		channel.send(JSON.stringify({
-		type: "state",
-		players
+			type: "state",
+			players
 		}));
 	}
 
@@ -144,22 +180,14 @@ function onMessage(e) {
 function checkWin() {
 	players.forEach((p, i) => {
 		if (Math.abs(p.x - dot.x) < 10 && Math.abs(p.y - dot.y) < 10) {
-		alert("Player " + i + " wins!");
+			alert("Player " + i + " wins!");
 		}
 	});
 }
 
 // ================== INPUT ==================
 document.addEventListener("keydown", (e) => {
-	if (!channel) {
-		console.log("No data channel yet");
-		return;
-	}
-
-	if (channel.readyState !== "open") {
-		console.log("DataChannel not open yet:", channel.readyState);
-		return;
-	}
+	if (!channel || channel.readyState !== "open") return;
 
 	const move = { x: 0, y: 0 };
 
@@ -168,12 +196,10 @@ document.addEventListener("keydown", (e) => {
 	if (e.key === "ArrowLeft") move.x = -5;
 	if (e.key === "ArrowRight") move.x = 5;
 
-	if (move.x !== 0 || move.y !== 0) {
-		console.log("Sending move", move);
+	if (move.x || move.y) {
 		channel.send(JSON.stringify({ type: "move", move }));
 	}
 });
-
 
 // ================== DRAW ==================
 function draw() {
