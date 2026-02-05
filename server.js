@@ -56,6 +56,15 @@ wss.on("connection", (socket) => {
         host: isHost,
         index
       }));
+      // 🔔 Notify host that someone joined
+    if (!isHost) {
+      const hostSocket = room.players[0];
+      if (hostSocket.readyState === WebSocket.OPEN) {
+        hostSocket.send(JSON.stringify({
+          type: "peer-joined"
+        }));
+      }
+    }
 
       return;
     }
