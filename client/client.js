@@ -41,7 +41,7 @@ function join(room, password) {
 		if (data.type === "joined") {
 			isHost = data.host;
 			playerIndex = data.index;
-			console.log("Joined room | Host:", isHost);
+			console.log("Player " +data.index+ "joined room | Host:", isHost);
 			startWebRTC();
 			return;
 		}
@@ -160,8 +160,8 @@ function onMessage(e) {
 	console.log("Data message:", data);
 
 	if (isHost && data.type === "move") {
-		players[playerIndex].x += data.move.x;
-		players[playerIndex].y += data.move.y;
+		players[data.player].x += data.move.x;
+		players[data.player].y += data.move.y;
 
 		checkWin();
 
@@ -197,7 +197,7 @@ document.addEventListener("keydown", (e) => {
 	if (e.key === "ArrowRight") move.x = 5;
 
 	if (move.x || move.y) {
-		channel.send(JSON.stringify({ type: "move", move }));
+		channel.send(JSON.stringify({player: playerIndex, type: "move", move }));
 	}
 });
 
