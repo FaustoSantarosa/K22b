@@ -56,7 +56,7 @@ wss.on("connection", (socket) => {
         host: isHost,
         index
       }));
-      // 🔔 Notify host that someone joined
+      // Notify host that someone joined
     if (!isHost) {
       const hostSocket = room.players[0];
       if (hostSocket.readyState === WebSocket.OPEN) {
