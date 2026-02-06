@@ -16,94 +16,104 @@ function uid() {
 }
 
 wss.on("connection", (socket) => {
-  socket.id = uid();
+socket.id = uid();
 
-  socket.on("message", (msg) => {
-    let data;
-    try {
-      data = JSON.parse(msg);
-    } catch {
-      return;
-    }
+socket.on("message", (msg) => {
+	let data;
+	try {
+	data = JSON.parse(msg);
+	} catch {
+	return;
+	}
 
-    // ===== JOIN ROOM =====
-    if (data.type === "join") {
-      const room = rooms[data.room];
-      if (!room) {
-        socket.send(JSON.stringify({ type: "error", message: "No such room" }));
-        return;
-      }
+	// ===== JOIN ROOM =====
+	if (data.type === "join") {
+	const room = rooms[data.room];
+	if (!room) {
+		socket.send(JSON.stringify({ type: "error", message: "No such room" }));
+		return;
+	}
 
-      if (data.password !== room.password) {
-        socket.send(JSON.stringify({ type: "error", message: "Wrong password" }));
-        return;
-      }
+	if (data.password !== room.password) {
+		socket.send(JSON.stringify({ type: "error", message: "Wrong password" }));
+		return;
+	}
 
-      if (room.players.size >= 6) {
-        socket.send(JSON.stringify({ type: "error", message: "Room full" }));
-        return;
-      }
+	if (room.players.size >= 6) {
+		socket.send(JSON.stringify({ type: "error", message: "Room full" }));
+		return;
+	}
 
-      socket.room = data.room;
-      socket.player = room.nextPlayerIndex++;
-      room.players.set(socket.id, socket);
+	socket.room = data.room;
+	socket.player = room.nextPlayerIndex++;
+	room.players.set(socket.id, socket);
 
-      const isHost = room.players.size === 1;
-      const peerIds = [...room.players.keys()].filter(id => id !== socket.id);
+	const isHost = room.players.size === 1;
+	const peerIds = [...room.players.keys()].filter(id => id !== socket.id);
 
-      socket.send(JSON.stringify({
-        type: "joined",
-        id: socket.id,
-        player: socket.player,
-        host: isHost,
-        peers: peerIds
-      }));
+	socket.send(JSON.stringify({
+		type: "joined",
+		id: socket.id,
+		player: socket.player,
+		host: isHost,
+		peers: peerIds
+	}));
 
-      // Notify existing peers
-      for (const [id, peer] of room.players) {
-        if (id !== socket.id && peer.readyState === WebSocket.OPEN) {
-          peer.send(JSON.stringify({
-            type: "peer-joined",
-            id: socket.id,
-        	player: socket.player
-          }));
-        }
-      }
+	// Notify existing peers
+	for (const [id, peer] of room.players) {
+		if (id !== socket.id && peer.readyState === WebSocket.OPEN) {
+		peer.send(JSON.stringify({
+			type: "peer-joined",
+			id: socket.id,
+			player: socket.player
+		}));
+		}
+	}
 
-      return;
-    }
+	return;
+	}
 
-    // ===== SIGNAL ROUTING =====
-    if (data.type === "signal") {
-      const room = rooms[socket.room];
-      if (!room) return;
+	// ===== SIGNAL ROUTING =====
+	if (data.type === "signal") {
+	const room = rooms[socket.room];
+	if (!room) return;
 
-      const target = room.players.get(data.to);
-      if (target && target.readyState === WebSocket.OPEN) {
-        target.send(JSON.stringify({
-          type: "signal",
-          from: socket.id,
-          signal: data.signal
-        }));
-      }
-    }
-  });
+	const target = room.players.get(data.to);
+	if (target && target.readyState === WebSocket.OPEN) {
+		target.send(JSON.stringify({
+		type: "signal",
+		from: socket.id,
+		signal: data.signal
+		}));
+	}
+	}
+});
 
-  socket.on("close", () => {
-    if (!socket.room) return;
+socket.on("close", () => {
+	const roomId = socket.room;
+	if (!roomId) return;
 
-    const room = rooms[socket.room];
-    room.players.delete(socket.id);
+	const room = rooms[roomId];
+	if (!room) return;
 
-    // Notify peers
-    for (const peer of room.players.values()) {
-      if (peer.readyState === WebSocket.OPEN) {
-        peer.send(JSON.stringify({
-          type: "peer-left",
-          id: socket.id
-        }));
-      }
-    }
-  });
+	room.players.delete(socket.id);
+
+	// If room is empty, reset player counter
+	if (room.players.size === 0) {
+		room.nextPlayerIndex = 0;
+	} else {
+		// Notify remaining peers that someone left (optional but recommended)
+		for (const peer of room.players.values()) {
+		if (peer.readyState === WebSocket.OPEN) {
+			peer.send(JSON.stringify({
+			type: "peer-left",
+			id: socket.id,
+			player: socket.player
+			}));
+		}
+		}
+	}
+});
+
 });
 
