@@ -70,6 +70,7 @@ function setupChannel(peerId, playerNumber, channel) {
 }
 
 async function handleSignal({ from, signal }) {
+	console.log("___" + from)
 	const pc = peers[from].pc;
 
 	if (signal.type === "offer") {
@@ -79,7 +80,7 @@ async function handleSignal({ from, signal }) {
 		socket.send(JSON.stringify({
 			type: "signal",
 			from: playerIndex,
-			to: from,
+			to: hostId,
 			signal: answer
 		}));
 	} else if (signal.type === "answer") {

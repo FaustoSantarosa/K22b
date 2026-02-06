@@ -28,8 +28,9 @@ function join(room, password) {
 			isHost = data.host;
 			peerList = data.peers;
 			console.log("Joined as Player " + playerIndex, myId, "host:", isHost);
-
+			hostId = peerList[0].id
 			for (const p of peerList) {
+				if (p.player == 0 ) {hostId = p.id};
 				createPeer(p.id, p.player, isHost);
 				if (isHost) {
 					await makeOffer(p.id, p.player);

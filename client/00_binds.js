@@ -16,9 +16,9 @@ const peers = {};
 // peers[peerId] = { pc, channel }
 
 let myId;
+let hostId;
 let isHost = false;
 let canStart = false;
-
 let playerIndex = 0;
 let playerIds = [0];
 
