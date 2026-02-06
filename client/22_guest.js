@@ -9,7 +9,6 @@ function guest_handleMessage(data){
 
 }
 
-
 function inform (typ, move) {
 	const msg = JSON.stringify({
 		player: playerIndex,
