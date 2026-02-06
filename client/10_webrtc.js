@@ -46,7 +46,7 @@ async function makeOffer(peerId, playerNumber) {
 
 	socket.send(JSON.stringify({
 		type: "signal",
-		from: myId,
+		from: playerIndex,
 		to: peerId,
 		signal: offer
 	}));
@@ -79,7 +79,7 @@ async function handleSignal({ from, signal }) {
 		await pc.setLocalDescription(answer);
 		socket.send(JSON.stringify({
 			type: "signal",
-			from: myId,
+			from: playerIndex,
 			to: from,
 			signal: answer
 		}));
