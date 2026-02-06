@@ -1,65 +1,64 @@
 // ================== JOIN ==================
 function join(room, password) {
-  console.log("Connecting WebSocket...");
+	console.log("Connecting WebSocket...");
 
-  socket = new WebSocket(SERVER_URL);
+	socket = new WebSocket(SERVER_URL);
 
-  socket.onopen = () => {
-    console.log("WebSocket open");
-    socket.send(JSON.stringify({
-      type: "join",
-      room,
-      password
-    }));
-  };
+	socket.onopen = () => {
+		console.log("WebSocket open");
+		socket.send(JSON.stringify({
+		type: "join",
+		room,
+		password
+		}));
+	};
 
-  socket.onerror = (e) => {
-    console.error("WebSocket error", e);
-  };
+	socket.onerror = (e) => {
+		console.error("WebSocket error", e);
+	};
 
-  socket.onmessage = async (e) => {
-    const data = JSON.parse(e.data);
-    console.log("WS message:", data);
+	socket.onmessage = async (e) => {
+		const data = JSON.parse(e.data);
+		console.log("WS message:", data);
 
-    // ===== JOINED =====
-    if (data.type === "joined") {
-      myId = data.id;
-      isHost = data.host;
+		// ===== JOINED =====
+		if (data.type === "joined") {
+			myId = data.id;
+			isHost = data.host;
 
-      console.log("Joined as", myId, "host:", isHost);
+			console.log("Joined as", myId, "host:", isHost);
 
-      // create peer connections for existing peers
-      for (const peerId of data.peers) {
-        createPeer(peerId, isHost);
-        if (isHost) {
-          await makeOffer(peerId);
-        }
-      }
-      return;
-    }
+			// create peer connections for existing peers
+			for (const peerId of data.peers) {
+				createPeer(peerId, isHost);
+				if (isHost) {
+					await makeOffer(peerId);
+				}
+			}
+			return;
+		}
 
-    // ===== PEER JOINED =====
-    if (data.type === "peer-joined" && isHost) {
-      const peerId = data.id;
-      console.log("New peer joined:", peerId);
+		// ===== PEER JOINED =====
+		if (data.type === "peer-joined" && isHost) {
+			const peerId = data.id;
+			console.log("New peer joined:", peerId);
+			createPeer(peerId, true);
+			await makeOffer(peerId);
+			return;
+		}
 
-      createPeer(peerId, true);
-      await makeOffer(peerId);
-      return;
-    }
+		// ===== SIGNAL =====
+		if (data.type === "signal") {
+			await handleSignal(data);
+			return;
+		}
 
-    // ===== SIGNAL =====
-    if (data.type === "signal") {
-      await handleSignal(data);
-      return;
-    }
-
-    // ===== ROOM FULL / ERROR =====
-    if (data.type === "room-full") {
-      alert("Room is full (max 6 players)");
-      socket.close();
-    }
-  };
+		// ===== ROOM FULL / ERROR =====
+		if (data.type === "room-full") {
+			alert("Room is full (max 6 players)");
+			socket.close();
+		}
+	};
 }
 
 

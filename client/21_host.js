@@ -1,6 +1,4 @@
-function host_handleMessage (e){
-// log message xxx delete in prod
-	const data = JSON.parse(e.data);
+function host_handleMessage (data){
 	console.log("Data message:", data);
 // how host handles messages
 	if (data.type === "move") {
@@ -22,6 +20,10 @@ function checkWin() {
 	});
 }
 
+function hostStartGame() {
+	if (!canStart) return;
+	initGame();
+}
 
 // ================== GAME ==================
 function initGame() {
