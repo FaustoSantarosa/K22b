@@ -9,3 +9,17 @@ function guest_handleMessage(e){
 	}
 
 }
+
+
+function inform (typ, move) {
+	const msg = JSON.stringify({
+		player: playerIndex,
+		type: typ,
+		move
+	});
+
+	const peer = peers[0];
+	if (peer.channel && peer.channel.readyState === "open") {
+		peer.channel.send(msg);
+	}
+}

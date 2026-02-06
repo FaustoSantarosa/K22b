@@ -40,9 +40,16 @@ function initGame() {
 	console.log("Game initialized");
 }
 
-function broadcast(array_name, array){
-	channel.send(JSON.stringify({
+function broadcast(array_name, array) {
+	const msg = JSON.stringify({
 		type: "state",
 		[array_name]: array
-	}));
+	});
+
+	for (const peerId in peers) {
+		const peer = peers[peerId];
+		if (peer.channel && peer.channel.readyState === "open") {
+		peer.channel.send(msg);
+		}
+	}
 }

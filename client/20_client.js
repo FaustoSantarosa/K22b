@@ -85,7 +85,7 @@ function handleMove(move) {
 		players[playerIndex].x += move.x;
 		players[playerIndex].y += move.y;
 	} else {
-		channel.send(JSON.stringify({player: playerIndex, type: "move", move }));
+		inform("move", move);
 	}
 }
 
