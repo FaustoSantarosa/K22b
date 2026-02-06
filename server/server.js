@@ -49,14 +49,19 @@ socket.on("message", (msg) => {
 	room.players.set(socket.id, socket);
 
 	const isHost = room.players.size === 1;
-	const peerIds = [...room.players.keys()].filter(id => id !== socket.id);
+	const peersList = Array.from(room.players.values())
+        .filter(peer => peer.id !== socket.id)
+        .map(peer => ({
+            id: peer.id,
+            player: peer.player
+        }));
 
 	socket.send(JSON.stringify({
 		type: "joined",
 		id: socket.id,
 		player: socket.player,
 		host: isHost,
-		peers: peerIds
+		peers: peersList
 	}));
 
 	// Notify existing peers
