@@ -29,15 +29,13 @@ function join(room, password) {
 
 			console.log("Joined as Player " + playerIndex, myId, "host:", isHost);
 
-			// EDIT SO THAT GUESTS ONLY MAKE CONNECTIONS TO HOST
-			/*
+			
 			for (const peerId of data.peers) {
 				createPeer(peerId, playerIndex, isHost);
 				if (isHost) {
-					await makeOffer(peerId);
+					await makeOffer(peerId, playerIndex);
 				}
 			}
-			*/
 			return;
 		}
 
