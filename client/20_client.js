@@ -47,7 +47,7 @@ function join(room, password) {
 			playerNumber = data.player;
 			console.log("New peer joined:", peerId);
 			createPeer(peerId, playerNumber, true);
-			await makeOffer(peerId);
+			await makeOffer(peerId, playerNumber);
 			return;
 		}
 
