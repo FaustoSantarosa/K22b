@@ -2,15 +2,13 @@ function hostStartGame() {
   if (!canStart) return;
 
   const msg = JSON.stringify({
-    type: "game-start",
-    seed: Math.random()
+    type: "game-start"
   });
 
   for (const peer of Object.values(peers)) {
     peer.channel.send(msg);
   }
-
-  startGame({ seed });
+initGame();
 }
 
 function checkCanStart() {
@@ -67,3 +65,25 @@ async function makeOffer(peerId) {
     signal: offer
   }));
 }
+
+function setupChannel(peerId, channel) {
+  channel.onopen = () => {
+    console.log("DC open with", peerId);
+    checkCanStart();
+  };
+
+  channel.onmessage = e => {
+    const msg = JSON.parse(e.data);
+
+    if (msg.type === "game-start") {
+      startGame(msg);
+    }
+
+    if (msg.type === "input") {
+      handleRemoteInput(peerId, msg);
+    }
+  };
+
+  peers[peerId].channel = channel;
+}
+
