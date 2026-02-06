@@ -73,10 +73,10 @@ async function handleSignal({ from, signal }) {
 	let pc;
 	for (i=0; i< peers.lenght; i++){
 		if (peerIds[i] == from) {
-			pc = peers[i];
+			pc = peers[i].pc;
 		}
 	}
-
+	console.log(pc);
 	if (signal.type === "offer") {
 		await pc.setRemoteDescription(signal);
 		const answer = await pc.createAnswer();
