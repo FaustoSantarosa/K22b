@@ -12,8 +12,7 @@ let pc;
 let channel;
 let channelReady = false;
 
-const peers = {}; 
-// peers[peerId] = { pc, channel }
+const peers = []; 
 
 let localId;
 let hostId;
