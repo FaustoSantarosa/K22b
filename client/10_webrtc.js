@@ -39,8 +39,8 @@ function createPeer(peerId, playerNumber, initiator) {
 	}
 }
 
-async function makeOffer(peerId) {
-	const pc = peers[peerId].pc;
+async function makeOffer(peerId, playerNumber) {
+	const pc = peers[playerNumber].pc;
 	const offer = await pc.createOffer();
 	await pc.setLocalDescription(offer);
 
