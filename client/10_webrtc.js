@@ -61,12 +61,10 @@ function setupChannel(peerId, channel) {
 	channel.onmessage = e => {
 		const msg = JSON.parse(e.data);
 
-		if (msg.type === "game-start") {
-			startGame(msg);
-		}
-
-		if (msg.type === "input") {
-			handleRemoteInput(peerId, msg);
+		if (isHost) {
+			host_handleMessage(peerId, msg);
+		} else {
+			guest_handleMessage(msg)
 		}
 	};
 	peers[peerId].channel = channel;
@@ -89,10 +87,6 @@ async function handleSignal({ from, signal }) {
 		await pc.setRemoteDescription(signal);
 	} else if (signal.candidate) {
 		await pc.addIceCandidate(signal);
-	} else if (isHost) {
-		host_handleMessage(signal);
-	} else {
-		guest_handleSignal(signal);
 	}
 }
 

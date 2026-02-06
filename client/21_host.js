@@ -1,4 +1,5 @@
 function host_handleMessage (data){
+// log message xxx delete in prod
 	console.log("Data message:", data);
 // how host handles messages
 	if (data.type === "move") {
@@ -51,7 +52,8 @@ function broadcast(array_name, array) {
 	for (const peerId in peers) {
 		const peer = peers[peerId];
 		if (peer.channel && peer.channel.readyState === "open") {
-		peer.channel.send(msg);
+			console.log(peer)
+			peer.channel.send(msg);
 		}
 	}
 }
