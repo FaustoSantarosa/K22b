@@ -1,72 +1,68 @@
 // ================== JOIN ==================
+// ================== JOIN ==================
 function join(room, password) {
-	console.log("Connecting WebSocket...");
+  console.log("Connecting WebSocket...");
 
-	socket = new WebSocket(SERVER_URL);
+  socket = new WebSocket(SERVER_URL);
 
-	socket.onopen = () => {
-		socketReady = true;
-		console.log("WebSocket open");
-		socket.send(JSON.stringify({ type: "join", room, password }));
-	};
+  socket.onopen = () => {
+    console.log("WebSocket open");
+    socket.send(JSON.stringify({
+      type: "join",
+      room,
+      password
+    }));
+  };
 
-	socket.onerror = (e) => {
-		console.error("WebSocket error", e);
-	};
+  socket.onerror = (e) => {
+    console.error("WebSocket error", e);
+  };
 
-	socket.onmessage = async (e) => {
-		console.log("WS message:", e.data);
-		const data = JSON.parse(e.data);
+  socket.onmessage = async (e) => {
+    const data = JSON.parse(e.data);
+    console.log("WS message:", data);
 
-		// ===== JOINED =====
-		if (data.type === "joined") {
-			isHost = data.host;
-			playerIndex = data.index;
-			console.log("Player " +data.index+ "joined room | Host:", isHost);
-			startWebRTC(); // ---->
-			return;
-		}
+    // ===== JOINED =====
+    if (data.type === "joined") {
+      myId = data.id;
+      isHost = data.host;
 
-		// ===== PEER JOINED =====
-		if (data.type === "peer-joined") {
-			console.log("Peer joined");
-			return;
-		}
+      console.log("Joined as", myId, "host:", isHost);
 
-		// ===== SIGNAL =====
-		if (data.type === "signal") {
-			const signal = data.signal;
+      // create peer connections for existing peers
+      for (const peerId of data.peers) {
+        createPeer(peerId, isHost);
+        if (isHost) {
+          await makeOffer(peerId);
+        }
+      }
+      return;
+    }
 
-			if (signal.type === "ready-for-offer" && isHost) {
-				console.log("Creating offer");
-				const offer = await pc.createOffer();
-				await pc.setLocalDescription(offer);
-				socket.send(JSON.stringify({ type: "signal", signal: offer }));
-				return;
-			}
+    // ===== PEER JOINED =====
+    if (data.type === "peer-joined" && isHost) {
+      const peerId = data.id;
+      console.log("New peer joined:", peerId);
 
-			if (signal.type === "offer") {
-				console.log("Received offer");
-				await pc.setRemoteDescription(signal);
-				const answer = await pc.createAnswer();
-				await pc.setLocalDescription(answer);
-				socket.send(JSON.stringify({ type: "signal", signal: answer }));
-				return;
-			}
+      createPeer(peerId, true);
+      await makeOffer(peerId);
+      return;
+    }
 
-			if (signal.type === "answer") {
-				console.log("Received answer");
-				await pc.setRemoteDescription(signal);
-				return;
-			}
+    // ===== SIGNAL =====
+    if (data.type === "signal") {
+      await handleSignal(data);
+      return;
+    }
 
-			if (signal.candidate) {
-				console.log("Received ICE");
-				await pc.addIceCandidate(signal);
-			}
-		}
-	};
+    // ===== ROOM FULL / ERROR =====
+    if (data.type === "room-full") {
+      alert("Room is full (max 6 players)");
+      socket.close();
+    }
+  };
 }
+
 
 
 // ================== INPUT ==================

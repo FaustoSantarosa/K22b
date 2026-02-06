@@ -1,4 +1,5 @@
 const WebSocket = require("ws");
+const crypto = require("crypto");
 
 const PORT = process.env.PORT || 8080;
 const wss = new WebSocket.Server({ port: PORT });
@@ -6,28 +7,28 @@ const wss = new WebSocket.Server({ port: PORT });
 console.log("Server started on port", PORT);
 
 const rooms = {
-  playroom: { password: "play123", players: [] },
-  testroom: { password: "test123", players: [] }
+  playroom: { password: "play123", players: new Map() },
+  testroom: { password: "test123", players: new Map() }
 };
 
+function uid() {
+  return crypto.randomUUID();
+}
+
 wss.on("connection", (socket) => {
-  console.log("Client connected");
+  socket.id = uid();
 
   socket.on("message", (msg) => {
-    console.log("Received:", msg.toString());
-
     let data;
     try {
       data = JSON.parse(msg);
-    } catch (e) {
-      console.error("Invalid JSON");
+    } catch {
       return;
     }
 
-    // JOIN ROOM
+    // ===== JOIN ROOM =====
     if (data.type === "join") {
       const room = rooms[data.room];
-
       if (!room) {
         socket.send(JSON.stringify({ type: "error", message: "No such room" }));
         return;
@@ -38,59 +39,68 @@ wss.on("connection", (socket) => {
         return;
       }
 
-      if (room.players.length >= 4) {
+      if (room.players.size >= 6) {
         socket.send(JSON.stringify({ type: "error", message: "Room full" }));
         return;
       }
 
       socket.room = data.room;
-      room.players.push(socket);
+      room.players.set(socket.id, socket);
 
-      const isHost = room.players.length === 1;
-      const index = room.players.length - 1;
-
-      console.log(`Player joined ${data.room} | host=${isHost}`);
+      const isHost = room.players.size === 1;
+      const peerIds = [...room.players.keys()].filter(id => id !== socket.id);
 
       socket.send(JSON.stringify({
         type: "joined",
+        id: socket.id,
         host: isHost,
-        index
+        peers: peerIds
       }));
-      // Notify host that someone joined
-    if (!isHost) {
-      const hostSocket = room.players[0];
-      if (hostSocket.readyState === WebSocket.OPEN) {
-        hostSocket.send(JSON.stringify({
-          type: "peer-joined"
-        }));
+
+      // Notify existing peers
+      for (const [id, peer] of room.players) {
+        if (id !== socket.id && peer.readyState === WebSocket.OPEN) {
+          peer.send(JSON.stringify({
+            type: "peer-joined",
+            id: socket.id
+          }));
+        }
       }
-    }
 
       return;
     }
 
-    // SIGNALING (WebRTC)
+    // ===== SIGNAL ROUTING =====
     if (data.type === "signal") {
       const room = rooms[socket.room];
       if (!room) return;
 
-      room.players.forEach(p => {
-        if (p !== socket && p.readyState === WebSocket.OPEN) {
-          p.send(JSON.stringify({
-            type: "signal",
-            signal: data.signal
-          }));
-        }
-      });
+      const target = room.players.get(data.to);
+      if (target && target.readyState === WebSocket.OPEN) {
+        target.send(JSON.stringify({
+          type: "signal",
+          from: socket.id,
+          signal: data.signal
+        }));
+      }
     }
   });
 
   socket.on("close", () => {
-    console.log("Client disconnected");
-
     if (!socket.room) return;
 
     const room = rooms[socket.room];
-    room.players = room.players.filter(p => p !== socket);
+    room.players.delete(socket.id);
+
+    // Notify peers
+    for (const peer of room.players.values()) {
+      if (peer.readyState === WebSocket.OPEN) {
+        peer.send(JSON.stringify({
+          type: "peer-left",
+          id: socket.id
+        }));
+      }
+    }
   });
 });
+

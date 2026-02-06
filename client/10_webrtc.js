@@ -1,48 +1,94 @@
-// ================== WEBRTC ==================
-function startWebRTC() {
-	console.log("Starting WebRTC");
+socket.onmessage = async (e) => {
+  const data = JSON.parse(e.data);
 
-	pc = new RTCPeerConnection();
-// if ICE candidate pops
-	pc.onicecandidate = (e) => {
-		if (e.candidate && socketReady) {
-			socket.send(JSON.stringify({
-				type: "signal",
-				signal: e.candidate
-			}));
-		}
-	};
-// if peer connection changes
-	pc.onconnectionstatechange = () => {
-		console.log("PC state:", pc.connectionState);
-	};
+  if (data.type === "joined") {
+    myId = data.id;
+    isHost = data.host;
 
-	if (isHost) {
-	// handle stuff if user is host
-		channel = pc.createDataChannel("game");
-		channel.onopen = () => {
-			console.log("HOST (you) opened DataChannel.");
-			channelReady = true;
-			initGame();
-		};
-		channel.onmessage = host_handleMessage;
+    // Create PCs for already-connected peers
+    for (const peerId of data.peers) {
+      createPeer(peerId, isHost);
+      if (isHost) await makeOffer(peerId);
+    }
+  }
 
-	} else {
-	// handle stuff if user is guest
-		pc.ondatachannel = (e) => {
-		// when datachannel is received
-			channel = e.channel;
-			console.log("DataChannel received");
-			channel.onopen = () => {
-				console.log("HOST (not you) opened DataChannel.");
-				channelReady = true;
-			};
-			channel.onmessage = guest_handleMessage;
-		};
-		socket.send(JSON.stringify({
-		// tell host guest is ready
-			type: "signal",
-			signal: { type: "ready-for-offer" }
-		}));
-	}
+  if (data.type === "peer-joined" && isHost) {
+    const peerId = data.id;
+    createPeer(peerId, true);
+    await makeOffer(peerId);
+  }
+
+  if (data.type === "signal") {
+    await handleSignal(data);
+  }
+};
+
+function hostStartGame() {
+  if (!canStart) return;
+
+  const msg = JSON.stringify({
+    type: "game-start",
+    seed: Math.random()
+  });
+
+  for (const peer of Object.values(peers)) {
+    peer.channel.send(msg);
+  }
+
+  startGame({ seed });
+}
+
+function checkCanStart() {
+  if (!isHost) return;
+
+  const ready = Object.values(peers)
+    .every(p => p.channel?.readyState === "open");
+
+  if (ready) canStart = true;
+}
+
+
+function createPeer(peerId, initiator) {
+  const pc = new RTCPeerConnection();
+
+  pc.onicecandidate = e => {
+    if (e.candidate) {
+      socket.send(JSON.stringify({
+        type: "signal",
+        from: myId,
+        to: peerId,
+        signal: e.candidate
+      }));
+    }
+  };
+
+  pc.onconnectionstatechange = () => {
+    console.log(peerId, pc.connectionState);
+  };
+
+  if (initiator) {
+    const channel = pc.createDataChannel("game");
+    setupChannel(peerId, channel);
+    peers[peerId] = { pc, channel };
+  } else {
+    pc.ondatachannel = e => {
+      setupChannel(peerId, e.channel);
+      peers[peerId].channel = e.channel;
+    };
+    peers[peerId] = { pc };
+  }
+}
+
+
+async function makeOffer(peerId) {
+  const pc = peers[peerId].pc;
+  const offer = await pc.createOffer();
+  await pc.setLocalDescription(offer);
+
+  socket.send(JSON.stringify({
+    type: "signal",
+    from: myId,
+    to: peerId,
+    signal: offer
+  }));
 }

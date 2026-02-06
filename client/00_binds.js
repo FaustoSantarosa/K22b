@@ -12,7 +12,13 @@ let pc;
 let channel;
 let channelReady = false;
 
+const peers = {}; 
+// peers[peerId] = { pc, channel }
+
+let myId;
 let isHost = false;
+let canStart = false;
+
 let playerIndex = 0;
 
 const players = [];
