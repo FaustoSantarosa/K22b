@@ -7,7 +7,7 @@ function host_handleMessage (e){
 		players[data.player].x += data.move.x;
 		players[data.player].y += data.move.y;
 		checkWin();
-		broadcast(players);
+		broadcastPlayers("players", players);
 	}
 }
 
@@ -40,9 +40,9 @@ function initGame() {
 	console.log("Game initialized");
 }
 
-function broadcast(array){
+function broadcast(array_name, array){
 	channel.send(JSON.stringify({
 		type: "state",
-		array
+		[array_name]: array
 	}));
 }
