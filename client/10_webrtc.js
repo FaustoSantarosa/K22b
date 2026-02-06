@@ -70,9 +70,10 @@ function setupChannel(peerId, playerNumber, channel) {
 }
 
 async function handleSignal({ from, signal }) {
+	let pc;
 	for (i=0; i< peers.lenght; i++){
 		if (peerIds[i] == from) {
-			const pc = peers[i];
+			pc = peers[i];
 		}
 	}
 
