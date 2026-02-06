@@ -1,5 +1,4 @@
 // ================== JOIN ==================
-// ================== JOIN ==================
 function join(room, password) {
   console.log("Connecting WebSocket...");
 

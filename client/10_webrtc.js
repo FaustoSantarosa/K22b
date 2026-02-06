@@ -1,28 +1,3 @@
-socket.onmessage = async (e) => {
-  const data = JSON.parse(e.data);
-
-  if (data.type === "joined") {
-    myId = data.id;
-    isHost = data.host;
-
-    // Create PCs for already-connected peers
-    for (const peerId of data.peers) {
-      createPeer(peerId, isHost);
-      if (isHost) await makeOffer(peerId);
-    }
-  }
-
-  if (data.type === "peer-joined" && isHost) {
-    const peerId = data.id;
-    createPeer(peerId, true);
-    await makeOffer(peerId);
-  }
-
-  if (data.type === "signal") {
-    await handleSignal(data);
-  }
-};
-
 function hostStartGame() {
   if (!canStart) return;
 
