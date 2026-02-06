@@ -87,3 +87,29 @@ function setupChannel(peerId, channel) {
   peers[peerId].channel = channel;
 }
 
+
+async function handleSignal({ from, signal }) {
+  const pc = peers[from].pc;
+
+  if (signal.type === "offer") {
+    await pc.setRemoteDescription(signal);
+    const answer = await pc.createAnswer();
+    await pc.setLocalDescription(answer);
+
+    socket.send(JSON.stringify({
+      type: "signal",
+      from: myId,
+      to: from,
+      signal: answer
+    }));
+  }
+
+  else if (signal.type === "answer") {
+    await pc.setRemoteDescription(signal);
+  }
+
+  else if (signal.candidate) {
+    await pc.addIceCandidate(signal);
+  }
+}
+
