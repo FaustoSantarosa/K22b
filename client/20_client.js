@@ -68,23 +68,6 @@ function join(room, password) {
 	};
 }
 
-// ================== GAME ==================
-function initGame() {
-	const corners = [
-		{ x: 0, y: 0 },
-		{ x: 580, y: 0 },
-		{ x: 0, y: 580 },
-		{ x: 580, y: 580 }
-	];
-
-	players.length = 0;
-	for (let i = 0; i < 4; i++) {
-		players.push({ ...corners[i] });
-	}
-
-	console.log("Game initialized");
-}
-
 
 // ================== INPUT ==================
 document.addEventListener("keydown", (e) => {
@@ -103,9 +86,10 @@ document.addEventListener("keydown", (e) => {
 });
 
 function handleMove(move) {
-	players[playerIndex].x += move.x;
-	players[playerIndex].y += move.y;
-	if (!isHost) {
+	if (isHost){
+		players[playerIndex].x += move.x;
+		players[playerIndex].y += move.y;
+	} else {
 		channel.send(JSON.stringify({player: playerIndex, type: "move", move }));
 	}
 }
