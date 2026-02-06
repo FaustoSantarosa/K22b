@@ -103,8 +103,8 @@ document.addEventListener("keydown", (e) => {
 });
 
 function handleMove(move) {
-	players[playerIndex].x += data.move.x;
-	players[playerIndex].y += data.move.y;
+	players[playerIndex].x += move.x;
+	players[playerIndex].y += move.y;
 	if (!isHost) {
 		channel.send(JSON.stringify({player: playerIndex, type: "move", move }));
 	}
