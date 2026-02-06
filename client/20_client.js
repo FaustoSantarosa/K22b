@@ -23,12 +23,11 @@ function join(room, password) {
 
 		// ===== JOINED =====
 		if (data.type === "joined") {
-			myId = data.id;
+			localId = data.id;
 			playerIndex = data.player;
 			isHost = data.host;
 			peerList = data.peers;
-			console.log("Joined as Player " + playerIndex, myId, "host:", isHost);
-			hostId = peerList[0].id
+			console.log("Joined as Player " + playerIndex, localId, "host:", isHost);
 			for (const p of peerList) {
 				if (p.player == 0 ) {hostId = p.id};
 				createPeer(p.id, p.player, isHost);

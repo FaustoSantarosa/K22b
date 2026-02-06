@@ -14,7 +14,8 @@ function createPeer(peerId, playerNumber, initiator) {
 		if (e.candidate) {
 		socket.send(JSON.stringify({
 			type: "signal",
-			from: myId,
+			from: localId,
+			fromPlayer: playerIndex,
 			to: peerId,
 			signal: e.candidate
 		}));
@@ -45,7 +46,8 @@ async function makeOffer(peerId, playerNumber) {
 
 	socket.send(JSON.stringify({
 		type: "signal",
-		from: playerIndex,
+		from: localId,
+		fromPlayer: playerIndex,
 		to: peerId,
 		signal: offer
 	}));
@@ -69,9 +71,9 @@ function setupChannel(peerId, playerNumber, channel) {
 	peers[playerNumber].channel = channel;
 }
 
-async function handleSignal({ from, signal }) {
-	console.log("___" + from)
-	const pc = peers[from].pc;
+async function handleSignal({ fromPlayer, signal }) {
+	console.log("___" + fromPlayer)
+	const pc = peers[fromPlayer].pc;
 
 	if (signal.type === "offer") {
 		await pc.setRemoteDescription(signal);
@@ -79,8 +81,9 @@ async function handleSignal({ from, signal }) {
 		await pc.setLocalDescription(answer);
 		socket.send(JSON.stringify({
 			type: "signal",
-			from: playerIndex,
-			to: hostId,
+			from: localId,
+			fromPlayer: playerIndex,
+			to: from,
 			signal: answer
 		}));
 	} else if (signal.type === "answer") {

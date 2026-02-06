@@ -15,12 +15,11 @@ let channelReady = false;
 const peers = {}; 
 // peers[peerId] = { pc, channel }
 
-let myId;
+let localId;
 let hostId;
 let isHost = false;
 let canStart = false;
 let playerIndex = 0;
-let playerIds = [0];
 
 const players = [];
 const dot = { x: 295, y: 295 };
