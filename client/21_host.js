@@ -21,13 +21,19 @@ function checkWin() {
 	});
 }
 
-function hostStartGame() {
-	if (!canStart) return;
-	initGame();
+function checkCanStart() {
+	if (!isHost) return;
+	if (checkChannels()) canStart = true;
+}
+
+function checkChannels(){
+	return Object.values(peers)
+		.every(p => p.channel?.readyState === "open");
 }
 
 // ================== GAME ==================
 function initGame() {
+	if (!canStart) return;
 	const corners = [
 		{ x: 0, y: 0 },
 		{ x: 580, y: 0 },

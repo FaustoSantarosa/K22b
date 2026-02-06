@@ -1,12 +1,3 @@
-function checkCanStart() {
-	if (!isHost) return;
-
-	const ready = Object.values(peers)
-		.every(p => p.channel?.readyState === "open");
-
-	if (ready) canStart = true;
-}
-
 function createPeer(peerId, playerNumber, initiator) {
 	const pc = new RTCPeerConnection();
 	peerIds[playerNumber] = peerId;

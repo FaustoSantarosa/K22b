@@ -66,7 +66,7 @@ function join(room, password) {
 
 // ================== INPUT ==================
 document.addEventListener("keydown", (e) => {
-	if (!channel || channel.readyState !== "open") return;
+	//if (!checkChannels()) return;
 
 	const move = { x: 0, y: 0 };
 

@@ -8,12 +8,7 @@ const SERVER_URL = "wss://k22b.onrender.com";
 let socket;
 let socketReady = false;
 
-let pc;
-let channel;
-let channelReady = false;
-
 const peers = []; 
-
 let localId;
 let hostId;
 let isHost = false;
