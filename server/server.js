@@ -7,12 +7,12 @@ const wss = new WebSocket.Server({ port: PORT });
 console.log("Server started on port", PORT);
 
 const rooms = {
-  playroom: { password: "play123", players: new Map() },
-  testroom: { password: "test123", players: new Map() }
+	playroom: { password: "play123", players: new Map(), nextPlayerIndex: 0},
+	testroom: { password: "test123", players: new Map(), nextPlayerIndex: 0}
 };
 
 function uid() {
-  return crypto.randomUUID();
+	return crypto.randomUUID();
 }
 
 wss.on("connection", (socket) => {
@@ -45,6 +45,7 @@ wss.on("connection", (socket) => {
       }
 
       socket.room = data.room;
+      socket.player = room.nextPlayerIndex++;
       room.players.set(socket.id, socket);
 
       const isHost = room.players.size === 1;
@@ -53,6 +54,7 @@ wss.on("connection", (socket) => {
       socket.send(JSON.stringify({
         type: "joined",
         id: socket.id,
+        player: socket.player,
         host: isHost,
         peers: peerIds
       }));
@@ -62,7 +64,8 @@ wss.on("connection", (socket) => {
         if (id !== socket.id && peer.readyState === WebSocket.OPEN) {
           peer.send(JSON.stringify({
             type: "peer-joined",
-            id: socket.id
+            id: socket.id,
+        	player: socket.player
           }));
         }
       }

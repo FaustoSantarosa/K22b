@@ -7,7 +7,7 @@ function checkCanStart() {
 	if (ready) canStart = true;
 }
 
-function createPeer(peerId, initiator) {
+function createPeer(peerId, playerNumber, initiator) {
 	const pc = new RTCPeerConnection();
 
 	pc.onicecandidate = e => {
@@ -24,18 +24,18 @@ function createPeer(peerId, initiator) {
 	pc.onconnectionstatechange = () => {
 		console.log(peerId, pc.connectionState);
 	};
-	console.log("________" + peerId)
-	peers[peerId] = { pc };
+	console.log("________" + playerNumber)
+	peers[playerNumber] = { pc };
 	if (initiator) {
 		const channel = pc.createDataChannel("game");
 		setupChannel(peerId, channel);
-		peers[peerId] = { pc, channel };
+		peers[playerNumber] = { pc, channel };
 	} else {
 		pc.ondatachannel = e => {
 			setupChannel(peerId, e.channel);
 			peers[peerId].channel = e.channel;
 		};
-		peers[peerId] = { pc };
+		peers[playerNumber] = { pc };
 	}
 }
 
@@ -52,7 +52,7 @@ async function makeOffer(peerId) {
 	}));
 }
 
-function setupChannel(peerId, channel) {
+function setupChannel(peerId, playerNumber, channel) {
 	channel.onopen = () => {
 		console.log("DC open with", peerId);
 		checkCanStart();
@@ -62,12 +62,12 @@ function setupChannel(peerId, channel) {
 		const msg = JSON.parse(e.data);
 
 		if (isHost) {
-			host_handleMessage(peerId, msg);
+			host_handleMessage(playerNumber, msg);
 		} else {
 			guest_handleMessage(msg)
 		}
 	};
-	peers[peerId].channel = channel;
+	peers[playerNumber].channel = channel;
 }
 
 async function handleSignal({ from, signal }) {

@@ -1,10 +1,10 @@
-function host_handleMessage (peerId, data){
+function host_handleMessage (playerNumber, data){
 // log message xxx delete in prod
 	console.log("Data message:", data);
 // how host handles messages
 	if (data.type === "move") {
-		players[data.player].x += data.move.x;
-		players[data.player].y += data.move.y;
+		players[playerNumber].x += data.move.x;
+		players[playerNumber].y += data.move.y;
 		checkWin();
 		broadcast("players", players);
 	}
@@ -48,12 +48,9 @@ function broadcast(array_name, array) {
 		type: "state",
 		[array_name]: array
 	});
-
-	for (const peerId in peers) {
-		const peer = peers[peerId];
+	peers.forEach(peer => {
 		if (peer.channel && peer.channel.readyState === "open") {
-			console.log(peer)
 			peer.channel.send(msg);
 		}
-	}
+	});
 }

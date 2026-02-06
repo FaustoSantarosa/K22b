@@ -16,7 +16,6 @@ function inform (typ, move) {
 		type: typ,
 		move
 	});
-
 	const peer = peers[0];
 	if (peer.channel && peer.channel.readyState === "open") {
 		console.log(peer)

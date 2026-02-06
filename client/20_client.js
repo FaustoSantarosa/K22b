@@ -24,25 +24,29 @@ function join(room, password) {
 		// ===== JOINED =====
 		if (data.type === "joined") {
 			myId = data.id;
+			playerIndex = data.player;
 			isHost = data.host;
 
-			console.log("Joined as", myId, "host:", isHost);
+			console.log("Joined as Player " + playerIndex, myId, "host:", isHost);
 
-			// create peer connections for existing peers
+			// EDIT SO THAT GUESTS ONLY MAKE CONNECTIONS TO HOST
+			/*
 			for (const peerId of data.peers) {
-				createPeer(peerId, isHost);
+				createPeer(peerId, playerIndex, isHost);
 				if (isHost) {
 					await makeOffer(peerId);
 				}
 			}
+			*/
 			return;
 		}
 
 		// ===== PEER JOINED =====
 		if (data.type === "peer-joined" && isHost) {
 			const peerId = data.id;
+			playerNumber = data.player;
 			console.log("New peer joined:", peerId);
-			createPeer(peerId, true);
+			createPeer(peerId, playerNumber, true);
 			await makeOffer(peerId);
 			return;
 		}
