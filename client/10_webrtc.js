@@ -9,13 +9,12 @@ function checkCanStart() {
 
 function createPeer(peerId, playerNumber, initiator) {
 	const pc = new RTCPeerConnection();
-
+	peerIds[playerNumber] = peerId;
 	pc.onicecandidate = e => {
 		if (e.candidate) {
 		socket.send(JSON.stringify({
 			type: "signal",
 			from: localId,
-			fromPlayer: playerIndex,
 			to: peerId,
 			signal: e.candidate
 		}));
@@ -47,7 +46,6 @@ async function makeOffer(peerId, playerNumber) {
 	socket.send(JSON.stringify({
 		type: "signal",
 		from: localId,
-		fromPlayer: playerIndex,
 		to: peerId,
 		signal: offer
 	}));
@@ -71,9 +69,12 @@ function setupChannel(peerId, playerNumber, channel) {
 	peers[playerNumber].channel = channel;
 }
 
-async function handleSignal({ fromPlayer, signal }) {
-	console.log("___" + fromPlayer)
-	const pc = peers[fromPlayer].pc;
+async function handleSignal({ from, signal }) {
+	for (i=0; i< peers.lenght; i++){
+		if (peerIds[i] == from) {
+			const pc = peers[i];
+		}
+	}
 
 	if (signal.type === "offer") {
 		await pc.setRemoteDescription(signal);
@@ -82,7 +83,6 @@ async function handleSignal({ fromPlayer, signal }) {
 		socket.send(JSON.stringify({
 			type: "signal",
 			from: localId,
-			fromPlayer: playerIndex,
 			to: from,
 			signal: answer
 		}));

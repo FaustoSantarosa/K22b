@@ -20,6 +20,7 @@ let hostId;
 let isHost = false;
 let canStart = false;
 let playerIndex = 0;
+let peerIds = [];
 
 const players = [];
 const dot = { x: 295, y: 295 };
