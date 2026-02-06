@@ -1,4 +1,4 @@
-function host_handleMessage (data){
+function host_handleMessage (peerId, data){
 // log message xxx delete in prod
 	console.log("Data message:", data);
 // how host handles messages

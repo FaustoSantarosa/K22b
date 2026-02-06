@@ -24,7 +24,7 @@ function createPeer(peerId, initiator) {
 	pc.onconnectionstatechange = () => {
 		console.log(peerId, pc.connectionState);
 	};
-
+	console.log("________" + peerId)
 	peers[peerId] = { pc };
 	if (initiator) {
 		const channel = pc.createDataChannel("game");

@@ -19,22 +19,7 @@ function inform (typ, move) {
 
 	const peer = peers[0];
 	if (peer.channel && peer.channel.readyState === "open") {
-		socket.send(JSON.stringify({
-			type: typ,
-			from: myId,
-			to: peer,
-			player: playerIndex,
-			move
-		}));
+		console.log(peer)
+		peer.channel.send(msg);
 	}
-}
-
-function sendToHost() {
-  if (!channel || channel.readyState !== "open") return;
-
-  const msg = JSON.stringify({
-    type: "state",
-    data: "hello"
-  });
-  channel.send(msg); // guest only has 1 channel → host
 }
