@@ -7,7 +7,7 @@ function host_handleMessage (e){
 		players[data.player].x += data.move.x;
 		players[data.player].y += data.move.y;
 		checkWin();
-		broadcastPlayers("players", players);
+		broadcast("players", players);
 	}
 }
 
@@ -36,7 +36,7 @@ function initGame() {
 	for (let i = 0; i < 4; i++) {
 		players.push({ ...corners[i] });
 	}
-	broadcast(players);
+	broadcast("players", players);
 	console.log("Game initialized");
 }
 
