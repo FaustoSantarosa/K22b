@@ -48,7 +48,8 @@ function host_sendWorld(peer, i){
 	console.log("Sending World milestone...")
 	const msg = JSON.stringify({
 		type: "world",
-		player: i 
+		player: i,
+		total: playersTotal
 	});
 	if (peer.reliable && peer.reliable.readyState === "open") {
 		peer.reliable.send(msg);

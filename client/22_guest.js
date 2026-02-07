@@ -16,7 +16,8 @@ function guest_handleMilestone(e){
 	const data = JSON.parse(e.data);
 	if (data.type === "world") {
 		console.log("World milestone:", data);
-		playerIndex = data.player;
+		playerIndex  = data.player;
+		playersTotal = data.total;
 	}
 
 }
