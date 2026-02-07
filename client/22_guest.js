@@ -3,7 +3,7 @@ function guest_handleBroadcast(e){
 	//if (Math.random() > 0.5) return;
 	//console.log("Broadcast:", data);
 	players.length = 0;
-	unpackBroadcast(e).forEach((p) => {
+	unpackBroadcast(e).players.forEach((p) => {
 		players.push(p);
 	});
 
