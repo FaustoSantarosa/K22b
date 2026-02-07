@@ -66,7 +66,7 @@ function checkCanStart() {
 
 function checkChannels(){
 	return Object.values(peers)
-		.every(p => p.channel?.readyState === "open");
+		.every(p => p.reliable?.readyState === "open");
 }
 
 // ================== GAME ==================

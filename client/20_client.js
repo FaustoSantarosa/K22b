@@ -1,7 +1,7 @@
 // ================== JOIN ==================
 function join(room, password) {
 	console.log("Connecting WebSocket...");
-	console.log("This might take a while since server is free.");
+	console.log("Since server is free this might take a while.");
 
 	socket = new WebSocket(SERVER_URL);
 
