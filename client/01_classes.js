@@ -1,5 +1,5 @@
 class Player {
-	constructor(x, y, z, w, h, k, t){
+	constructor({x=0, y=0, z=0, w=0, h=63, k=63, t=23}){
 		this.x = x; // 10 bits _range: 0-1023
 		this.y = y; // 10 bits _range: 0-1023
 		this.z = z; // 8 bits _range: 0-255

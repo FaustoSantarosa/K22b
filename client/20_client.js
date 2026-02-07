@@ -50,6 +50,15 @@ function join(room, password) {
 			return;
 		}
 
+		// ===== PEER LEFT =====
+		if (data.type === "peer-left" && isHost) {
+			const peerId = data.id;
+			const playerNumber = data.player;
+			console.log("GUEST P" + playerNumber + " left the room.");
+			peers.splice(playerNumber, 1);
+			return;
+		}
+
 		// ===== SIGNAL =====
 		if (data.type === "signal") {
 			await handleSignal(data);

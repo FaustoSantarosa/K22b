@@ -24,7 +24,7 @@ function packBroadcast(k22b, players) {
 	return writer.getBuffer();
 }
 
-function unpackBroadcast(buffer, playersTotal) {
+function unpackBroadcast(buffer) {
 	const reader = new BitReader(buffer);
 
 	const k22b = {

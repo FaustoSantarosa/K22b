@@ -1,12 +1,8 @@
 //=============================================
 function guest_handleBroadcast(e){
 	//if (Math.random() > 0.5) return;
-	const data = JSON.parse(e.data);
 	//console.log("Broadcast:", data);
-	if (data.type === "state") {
-		players.length = 0; // resets players data
-		data.players.forEach(p => players.push(p)); //update players data
-	}
+	players = unpackBroadcast(e);
 
 }
 

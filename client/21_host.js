@@ -91,17 +91,7 @@ function initGame() {
 		i++;
 		host_sendWorld(p, i);
 	});
-	return;
 
-	let k22b = {
-		tick: 0, // 16 bits _range: 0-65535
-		state: 1, // 3 bits _range: 0-7
-		randomIndex: 1 // 8 bits _range 0-255
-	}
-	let players = [];
-	for (i=0; i<playersTotal; i++){
-		players.push(new Player(i*3,0,0,0,63,63,63));
-	}
 	const corners = [
 		{ x: 0,				y: 0 },
 		{ x: screenW-20,	y: 0 },
@@ -109,10 +99,20 @@ function initGame() {
 		{ x: screenW-20,	y: screenH-20 }
 	];
 
-	players.length = 0;
-	for (let i = 0; i < 4; i++) {
-		players.push({ ...corners[i] });
+	let players = [];
+	for (i=0; i < playersTotal; i++){
+		players.push(new Player(corners[i]));
 	}
-	host_sendBroadcast("players", players);
+
+	let k22b = {
+		tick: 0, // 16 bits _range: 0-65535
+		state: 1, // 3 bits _range: 0-7
+		randomIndex: 1 // 8 bits _range 0-255
+	}
+	
+	setTimeout(() => {
+		host_sendBroadcast("players", players);
+	}, 2000);
+	
 	console.log("Game initialized");
 }
