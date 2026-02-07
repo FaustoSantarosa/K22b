@@ -1,6 +1,7 @@
 // ================== JOIN ==================
 function join(room, password) {
 	console.log("Connecting WebSocket...");
+	console.log("This might take a while since server is free.");
 
 	socket = new WebSocket(SERVER_URL);
 
@@ -98,5 +99,3 @@ function handleMove(move) {
 		inform("move", move);
 	}
 }
-
-

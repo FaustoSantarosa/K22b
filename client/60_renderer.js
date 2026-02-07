@@ -1,6 +1,6 @@
 // ================== DRAW ==================
 function draw() {
-	ctx.clearRect(0, 0, 600, 600);
+	ctx.clearRect(0, 0, screenW, screenH);
 
 	ctx.fillStyle = "red";
 	ctx.fillRect(dot.x, dot.y, 10, 10);

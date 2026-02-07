@@ -1,5 +1,5 @@
 function createPeer(peerId, playerNumber, initiator) {
-	console.log("Creating P" + playerNumber + "peer...")
+	console.log("Creating P" + playerNumber + " peer...")
 	const pc = new RTCPeerConnection();
 	peerIds[playerNumber] = peerId;
 	pc.onicecandidate = e => {
@@ -13,7 +13,7 @@ function createPeer(peerId, playerNumber, initiator) {
 		}
 	};
 	pc.onconnectionstatechange = () => {
-		console.log(peerId, pc.connectionState);
+		console.log("P" + playerNumber +" "+ pc.connectionState + ".");
 	};
 	peers[playerNumber] = { pc };
 	if (initiator) {

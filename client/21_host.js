@@ -33,10 +33,10 @@ function checkChannels(){
 function initGame() {
 	if (!canStart) return;
 	const corners = [
-		{ x: 0, y: 0 },
-		{ x: 580, y: 0 },
-		{ x: 0, y: 580 },
-		{ x: 580, y: 580 }
+		{ x: 0,				y: 0 },
+		{ x: screenW-20,	y: 0 },
+		{ x: 0,				y: screenH-20 },
+		{ x: screenW-20,	y: screenH-20 }
 	];
 
 	players.length = 0;

@@ -17,4 +17,14 @@ let playerIndex = 0;
 let peerIds = [];
 
 const players = [];
-const dot = { x: 295, y: 295 };
+
+//
+
+const screenW = 400;
+const screenH = 400;
+
+
+
+// =======================================
+const dot = { x: screenW/2 -5, y: screenH/2 -5 };
+
