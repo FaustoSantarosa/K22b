@@ -67,14 +67,13 @@ async function handleSignal({ from, signal }) {
 	let pc;
 	let pj;
 	for (i=0; i< peers.length; i++){
-		console.log(peerIds[i], from);
 		if (peerIds[i] == from) {
 			pc = peers[i].pc;
 			pj = i;
 		}
 	}
 	if (signal.type === "offer") {
-		console.log("Answer received from P"+ pj);
+		console.log("Offer received from P"+ pj);
 		await pc.setRemoteDescription(signal);
 		const answer = await pc.createAnswer();
 		await pc.setLocalDescription(answer);
@@ -85,10 +84,10 @@ async function handleSignal({ from, signal }) {
 			signal: answer
 		}));
 	} else if (signal.type === "answer") {
-		console.log("Answer received from GUEST"+ from);
+		console.log("Answer received from GUEST"+ pj);
 		await pc.setRemoteDescription(signal);
 	} else if (signal.candidate) {
-		console.log("Candidate received from "+ from);
+		console.log("Candidate received from "+ pj);
 		await pc.addIceCandidate(signal);
 	}
 }
