@@ -16,10 +16,14 @@ let canStart = false;
 let playerIndex = 0;
 let peerIds = [];
 let playersTotal = 1;
-let k22b;
 
 const playersReady = [];
 const players = [];
+const k22b = {
+	tick: 0, // 16 bits _range: 0-65535
+	state: 1, // 3 bits _range: 0-7
+	randomIndex: 1 // 8 bits _range 0-255
+};
 
 //
 
