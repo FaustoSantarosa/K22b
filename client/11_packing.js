@@ -1,8 +1,7 @@
 function packBroadcast() {
-	const totalBits =
-		27 + players.length * 52;
-
+	const totalBits = 27 + players.length * 52;
 	const totalBytes = Math.ceil(totalBits / 8);
+
 	const writer = new BitWriter(totalBytes);
 
 	// ---- Global ----

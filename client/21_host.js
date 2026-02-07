@@ -20,7 +20,7 @@ function host_handleWarning (playerNumber, e){
 	}
 }
 
-function host_sendBroadcast(array_name, array) {
+function host_sendBroadcast() {
 	console.log("Broadcasting...")
 	const msg = packBroadcast();
 	peers.forEach(peer => {

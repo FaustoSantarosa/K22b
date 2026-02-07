@@ -1,10 +1,8 @@
 //=============================================
 function guest_handleBroadcast(e){
 	//if (Math.random() > 0.5) return;
-	//console.log("Broadcast:", data);
+	console.log("Broadcast:", data);
 	players.length = 0;
-	console.log(e);
-	console.log(unpackBroadcast(e).players);
 	unpackBroadcast(e).playersArray.forEach((p) => {
 		players.push(p);
 	});

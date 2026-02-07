@@ -17,17 +17,28 @@ class BitWriter {
 		this.byte = 0;
 		this.bit = 0;
 	}
+
 	write(value, bits) {
+		// Mask value so it cannot overflow the bit count
+		value &= (1 << bits) - 1;
+
 		for (let i = bits - 1; i >= 0; i--) {
 			const bit = (value >> i) & 1;
+
+			if (this.byte >= this.buffer.length) {
+				throw new Error("BitWriter overflow");
+			}
+
 			this.buffer[this.byte] |= bit << (7 - this.bit);
 			this.bit++;
+
 			if (this.bit === 8) {
 				this.bit = 0;
 				this.byte++;
 			}
 		}
 	}
+
 	getBuffer() {
 		return this.buffer;
 	}
@@ -39,18 +50,27 @@ class BitReader {
 		this.byte = 0;
 		this.bit = 0;
 	}
+
 	read(bits) {
 		let value = 0;
+
 		for (let i = 0; i < bits; i++) {
+			if (this.byte >= this.buffer.length) {
+				throw new Error("BitReader overflow");
+			}
+
 			value <<= 1;
 			const bit = (this.buffer[this.byte] >> (7 - this.bit)) & 1;
 			value |= bit;
+
 			this.bit++;
 			if (this.bit === 8) {
 				this.bit = 0;
 				this.byte++;
 			}
 		}
+
 		return value;
 	}
 }
+
