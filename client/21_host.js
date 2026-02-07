@@ -23,7 +23,7 @@ function host_handleWarning (playerNumber, e){
 }
 
 function host_sendBroadcast(array_name, array) {
-	//console.log("Broadcasting...")
+	console.log("Broadcasting...")
 	const msg = packBroadcast();
 	peers.forEach(peer => {
 		if (peer.fast && peer.fast.readyState === "open") {
@@ -33,7 +33,7 @@ function host_sendBroadcast(array_name, array) {
 }
 
 function host_sendMilestone(array_name, array) {
-	console.log("Setting milestone...")
+	console.log("Sending milestone...")
 	const msg = JSON.stringify({
 		type: "milestone",
 		[array_name]: array
@@ -45,7 +45,7 @@ function host_sendMilestone(array_name, array) {
 	});
 }
 function host_sendWorld(peer, i){
-	console.log("Setting World milestone...")
+	console.log("Sending World milestone...")
 	const msg = JSON.stringify({
 		type: "world",
 		player: i 
@@ -96,7 +96,7 @@ function initGame() {
 		{ x: screenW-20,	y: screenH-20 }
 	];
 
-	let players = [];
+	players.length = 0;
 	for (i=0; i < playersTotal; i++){
 		players.push(new Player(corners[i]));
 	}
