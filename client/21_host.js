@@ -101,7 +101,7 @@ function initGame() {
 		players.push(new Player(corners[i]));
 	}
 
-	let k22b = {
+	k22b = {
 		tick: 0, // 16 bits _range: 0-65535
 		state: 1, // 3 bits _range: 0-7
 		randomIndex: 1 // 8 bits _range 0-255

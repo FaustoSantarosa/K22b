@@ -16,6 +16,7 @@ let canStart = false;
 let playerIndex = 0;
 let peerIds = [];
 let playersTotal = 1;
+let k22b;
 
 const players = [];
 
