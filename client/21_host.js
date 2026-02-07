@@ -111,6 +111,6 @@ function initGame() {
 }
 
 function startGame(){
-	host_sendBroadcast("players", players);
+	host_sendBroadcast();
 	console.log(">> Game started.")
 }

@@ -1,12 +1,13 @@
 //=============================================
 function guest_handleBroadcast(e){
 	//if (Math.random() > 0.5) return;
-	console.log("Broadcast received.");
+	//console.log("Broadcast received.");
+	const { k22bArray, playersArray } = unpackBroadcast(buffer);
+	Object.assign(k22b, k22bArray);
 	players.length = 0;
-	unpackBroadcast(e)[1].forEach((p) => {
+	for (const p of playersArray) {
 		players.push(p);
-	});
-
+	}
 }
 
 function guest_handleMilestone(e){
