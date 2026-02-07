@@ -23,15 +23,13 @@ function host_handleWarning (playerNumber, e){
 function host_sendBroadcast() {
 	console.log("Broadcasting...")
 	const msg = packBroadcast();
-	/*
 	const payload = msg.buffer.slice(
 		msg.byteOffset,
 		msg.byteOffset + msg.byteLength
 	);
-	*/
 	peers.forEach(peer => {
 		if (peer.fast && peer.fast.readyState === "open") {
-			peer.fast.send(msg);
+			peer.fast.send(payload);
 		}
 	});
 }
