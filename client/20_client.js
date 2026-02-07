@@ -32,7 +32,7 @@ function join(room, password) {
 			else		console.log("Joined as GUEST P" + playerIndex + ".");
 			for (const p of peerList) {
 				if (p.player == 0 ) {hostId = p.id};
-				createPeer(p.id, p.player, isHost);
+				//createPeer(p.id, p.player, isHost);
 				if (isHost) {
 					await makeOffer(p.id, p.player);
 				}
