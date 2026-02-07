@@ -25,7 +25,7 @@ function host_sendBroadcast() {
 	const msg = packBroadcast();
 	peers.forEach(peer => {
 		if (peer.fast && peer.fast.readyState === "open") {
-			peer.fast.send(msg.buffer);
+			peer.fast.send(msg);
 		}
 	});
 }

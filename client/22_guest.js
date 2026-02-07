@@ -2,7 +2,12 @@
 function guest_handleBroadcast(e){
 	//if (Math.random() > 0.5) return;
 	//console.log("Broadcast received.");
-	const { k22bArray, playersArray } = unpackBroadcast(e.data);
+	const buffer =
+		e.data instanceof Uint8Array
+			? e.data
+			: new Uint8Array(e.data);
+
+	const { k22bArray, playersArray } = unpackBroadcast(buffer);
 	console.log(playersArray);
 	Object.assign(k22b, k22bArray);
 	players.length = 0;
