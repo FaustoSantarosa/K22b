@@ -1,4 +1,5 @@
 function createPeer(peerId, playerNumber, initiator) {
+	console.log("Creating P" + playerNumber + "peer...")
 	const pc = new RTCPeerConnection();
 	peerIds[playerNumber] = peerId;
 	pc.onicecandidate = e => {
@@ -11,7 +12,6 @@ function createPeer(peerId, playerNumber, initiator) {
 		}));
 		}
 	};
-
 	pc.onconnectionstatechange = () => {
 		console.log(peerId, pc.connectionState);
 	};
@@ -30,6 +30,7 @@ function createPeer(peerId, playerNumber, initiator) {
 }
 
 async function makeOffer(peerId, playerNumber) {
+	console.log("making offer to P" + playerNumber+ "...")
 	const pc = peers[playerNumber].pc;
 	const offer = await pc.createOffer();
 	await pc.setLocalDescription(offer);
@@ -43,11 +44,11 @@ async function makeOffer(peerId, playerNumber) {
 }
 
 function setupChannel(peerId, playerNumber, channel) {
+	console.log("Setting up channel to P" +playerNumber+ "...")
 	channel.onopen = () => {
 		console.log("DC open with", peerId);
 		checkCanStart();
 	};
-
 	channel.onmessage = e => {
 		const msg = JSON.parse(e.data);
 
@@ -61,6 +62,7 @@ function setupChannel(peerId, playerNumber, channel) {
 }
 
 async function handleSignal({ from, signal }) {
+	console.log("handling signal...")
 	let pc;
 	for (i=0; i< peers.length; i++){
 		console.log(peerIds[i], from);
@@ -68,7 +70,6 @@ async function handleSignal({ from, signal }) {
 			pc = peers[i].pc;
 		}
 	}
-	console.log(pc);
 	if (signal.type === "offer") {
 		await pc.setRemoteDescription(signal);
 		const answer = await pc.createAnswer();

@@ -70,10 +70,18 @@ document.addEventListener("keydown", (e) => {
 
 	const move = { x: 0, y: 0 };
 
-	if (e.key === "ArrowUp") move.y = -5;
-	if (e.key === "ArrowDown") move.y = 5;
-	if (e.key === "ArrowLeft") move.x = -5;
-	if (e.key === "ArrowRight") move.x = 5;
+	if (e.code === "KeyW"
+	||  e.key  === "ArrowUp")
+		move.y = -5;
+	if (e.code === "KeyS"
+	||  e.key  === "ArrowDown")
+		move.y =  5;
+	if (e.code === "KeyA"
+	||  e.key  === "ArrowLeft")
+		move.x = -5;
+	if (e.code === "KeyD"
+	||  e.key  === "ArrowRight")
+		move.x =  5;
 
 	if (move.x || move.y) {
 		handleMove(move);
@@ -84,6 +92,7 @@ function handleMove(move) {
 	if (isHost){
 		players[playerIndex].x += move.x;
 		players[playerIndex].y += move.y;
+		broadcast("players", players);
 	} else {
 		inform("move", move);
 	}

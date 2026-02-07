@@ -10,9 +10,7 @@ function host_handleMessage (playerNumber, data){
 	}
 }
 
-
 // host stuff
-
 function checkWin() {
 	players.forEach((p, i) => {
 		if (Math.abs(p.x - dot.x) < 10 && Math.abs(p.y - dot.y) < 10) {
