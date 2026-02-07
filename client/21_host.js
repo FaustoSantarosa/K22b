@@ -1,4 +1,4 @@
-function host_handleMessage (playerNumber, e){
+function host_handleReport (playerNumber, e){
 // log message xxx delete in prod
 	const data = JSON.parse(e.data);
 	console.log("Data message:", data);
@@ -11,7 +11,46 @@ function host_handleMessage (playerNumber, e){
 	}
 }
 
-// host stuff
+function host_handleWarning (playerNumber, e){
+// log message xxx delete in prod
+	const data = JSON.parse(e.data);
+	console.log("Data message:", data);
+// how host handles messages
+	if (data.type === "move") {
+		players[playerNumber].x += data.move.x;
+		players[playerNumber].y += data.move.y;
+		checkWin();
+		broadcast("players", players);
+	}
+}
+function host_sendBroadcast(array_name, array) {
+	console.log("Broadcasting...")
+	const msg = JSON.stringify({
+		type: "state",
+		[array_name]: array
+	});
+	peers.forEach(peer => {
+		if (peer.fast && peer.fast.readyState === "open") {
+			peer.fast.send(msg);
+		}
+	});
+}
+
+function host_sendMilestone(array_name, array) {
+	console.log("Setting milestone...")
+	const msg = JSON.stringify({
+		type: "state",
+		[array_name]: array
+	});
+	peers.forEach(peer => {
+		if (peer.reliable && peer.reliable.readyState === "open") {
+			peer.reliable.send(msg);
+		}
+	});
+}
+
+
+// ========= host stuff============
 function checkWin() {
 	players.forEach((p, i) => {
 		if (Math.abs(p.x - dot.x) < 10 && Math.abs(p.y - dot.y) < 10) {
@@ -44,18 +83,6 @@ function initGame() {
 	for (let i = 0; i < 4; i++) {
 		players.push({ ...corners[i] });
 	}
-	broadcast("players", players);
+	host_sendBroadcast("players", players);
 	console.log("Game initialized");
-}
-
-function broadcast(array_name, array) {
-	const msg = JSON.stringify({
-		type: "state",
-		[array_name]: array
-	});
-	peers.forEach(peer => {
-		if (peer.channel && peer.channel.readyState === "open") {
-			peer.channel.send(msg);
-		}
-	});
 }

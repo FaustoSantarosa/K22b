@@ -94,8 +94,8 @@ function handleMove(move) {
 	if (isHost){
 		players[playerIndex].x += move.x;
 		players[playerIndex].y += move.y;
-		broadcast("players", players);
+		host_sendBroadcast("players", players);
 	} else {
-		inform("move", move);
+		guest_sendReport("move", move);
 	}
 }

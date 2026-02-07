@@ -14,7 +14,7 @@ function createPeer(peerId, playerNumber, initiator) {
 		}
 	};
 	pc.onconnectionstatechange = () => {
-		const begi = pc.connectionState.endsWith('d') ? '>>' : '';
+		const begi = pc.connectionState.endsWith('d') ? '>> ' : '';
 		const stat = pc.connectionState.endsWith('d') ? '.' : '...';
 		console.log(begi + "P" + playerNumber +" "+ pc.connectionState + stat);
 	};
@@ -31,8 +31,8 @@ function createPeer(peerId, playerNumber, initiator) {
 		fastChannel		(peerId, playerNumber, channel_fast);
 		peers[playerNumber] = {
 			pc,
-			reliable: reliableChannel,
-			fast: fastChannel
+			reliable: channel_reliable,
+			fast: channel_fast
 		};
 	} else {
 		/*
@@ -78,14 +78,14 @@ async function makeOffer(peerId, playerNumber) {
 function reliableChannel(peerId, playerNumber, channel) {
 	console.log("Setting up reliable channel to P" + playerNumber +"...")
 	channel.onopen = () => {
-		console.log(">>Reliable DC open with P" + playerNumber +".");
+		console.log(">> Reliable DC open with P" + playerNumber +".");
 		checkCanStart();
 	};
 	channel.onmessage = e => {
 		if (isHost) {
-			host_handleMessage(playerNumber, msg);
+			host_handleWarning(playerNumber, msg);
 		} else {
-			guest_handleMessage(msg)
+			guest_handleMilestone(msg)
 		}
 	};
 	peers[playerNumber].channel = channel;
@@ -94,14 +94,14 @@ function reliableChannel(peerId, playerNumber, channel) {
 function fastChannel(peerId, playerNumber, channel) {
 	console.log("Setting up fast channel to P" + playerNumber +"...")
 	channel.onopen = () => {
-		console.log(">>Fast DC open with P" + playerNumber +".");
+		console.log(">> Fast DC open with P" + playerNumber +".");
 		checkCanStart();
 	};
 	channel.onmessage = e => {
 		if (isHost) {
-			host_handleMessage(playerNumber, msg);
+			host_handleReport(playerNumber, msg);
 		} else {
-			guest_handleMessage(msg)
+			guest_handleBroadcast(msg)
 		}
 	};
 	peers[playerNumber].channel = channel;
