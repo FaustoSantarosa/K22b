@@ -23,8 +23,8 @@ function createPeer(peerId, playerNumber, initiator) {
 		const channel_reliable	= pc.createDataChannel("reliable", RELIABLE_CONFIG);
 		const channel_fast		= pc.createDataChannel("fast", FAST_CONFIG);
 		channel_fast.binaryType = "arraybuffer";
-		reliableChannel	(peerId, playerNumber, channel_reliable);
-		fastChannel		(peerId, playerNumber, channel_fast);
+		reliableChannel	(playerNumber, channel_reliable);
+		fastChannel		(playerNumber, channel_fast);
 		peers[playerNumber] = {
 			pc,
 			reliable: channel_reliable,
