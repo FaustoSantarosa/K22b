@@ -1,9 +1,9 @@
 //=============================================
 function guest_handleBroadcast(e){
 	//if (Math.random() > 0.5) return;
-	console.log("Broadcast:", data);
+	console.log("Broadcast received.");
 	players.length = 0;
-	unpackBroadcast(e).playersArray.forEach((p) => {
+	unpackBroadcast(e)[1].forEach((p) => {
 		players.push(p);
 	});
 
@@ -44,7 +44,6 @@ function guest_sendWarning (typ, warn) {
 	});
 	const peer = peers[0];
 	if (peer.reliable && peer.reliable.readyState === "open") {
-		console.log(peer)
 		peer.reliable.send(msg);
 	}
 }
