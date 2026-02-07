@@ -10,4 +10,3 @@ function draw() {
 
 	requestAnimationFrame(draw);
 }
-
