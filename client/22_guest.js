@@ -11,11 +11,11 @@ function guest_handleBroadcast(e){
 }
 
 function guest_handleMilestone(e){
+	console.log("Milestone received.")
 	const data = JSON.parse(e.data);
-	console.log("Milestone:", data);
-	if (data.type === "state") {
-		players.length = 0; // resets players data
-		data.players.forEach(p => players.push(p)); //update players data
+	if (data.type === "world") {
+		console.log("World milestone:", data);
+		playerIndex = data.player;
 	}
 
 }

@@ -47,7 +47,12 @@ function host_sendMilestone(array_name, array) {
 		}
 	});
 }
-function host_sendWorld(peer, msg){
+function host_sendWorld(peer, i){
+	console.log("Setting World milestone...")
+	const msg = JSON.stringify({
+		type: "world",
+		player: i 
+	});
 	if (peer.reliable && peer.reliable.readyState === "open") {
 		peer.reliable.send(msg);
 	}
@@ -80,11 +85,11 @@ function initGame() {
 	peers.forEach((p) => {
 		i++;
 	});
-	playersTotal = i;
+	playersTotal = i+1;
 	i = 0;
 	peers.forEach((p) => {
 		i++;
-		host_sendWorld(p, "You are P" + i + " of " + playersTotal + ".");
+		host_sendWorld(p, i);
 	});
 	return;
 
