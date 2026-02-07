@@ -24,10 +24,7 @@ function host_handleWarning (playerNumber, e){
 
 function host_sendBroadcast(array_name, array) {
 	//console.log("Broadcasting...")
-	const msg = JSON.stringify({
-		type: "state",
-		[array_name]: array
-	});
+	const msg = packBroadcast();
 	peers.forEach(peer => {
 		if (peer.fast && peer.fast.readyState === "open") {
 			peer.fast.send(msg);
@@ -109,7 +106,7 @@ function initGame() {
 		state: 1, // 3 bits _range: 0-7
 		randomIndex: 1 // 8 bits _range 0-255
 	}
-	
+
 	setTimeout(() => {
 		host_sendBroadcast("players", players);
 	}, 2000);

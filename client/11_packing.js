@@ -1,4 +1,4 @@
-function packBroadcast(k22b, players) {
+function packBroadcast() {
 	const totalBits =
 		27 + players.length * 52;
 
