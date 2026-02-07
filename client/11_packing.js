@@ -27,16 +27,16 @@ function packBroadcast() {
 function unpackBroadcast(buffer) {
 	const reader = new BitReader(buffer);
 
-	const k22b = {
+	const k22bArray = {
 		tick: reader.read(16),
 		state: reader.read(3),
 		randomIndex: reader.read(8)
 	};
 
-	const players = [];
+	const playersArray = [];
 
 	for (let i = 0; i < playersTotal; i++) {
-		players.push({
+		playersArray.push({
 			x: reader.read(10),
 			y: reader.read(10),
 			z: reader.read(8),
@@ -47,5 +47,5 @@ function unpackBroadcast(buffer) {
 		});
 	}
 
-	return { k22b, players };
+	return { k22bArray, playersArray };
 }
