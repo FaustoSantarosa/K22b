@@ -20,7 +20,7 @@ function join(room, password) {
 
 	socket.onmessage = async (e) => {
 		const data = JSON.parse(e.data);
-		console.log("WS message:", data);
+		//console.log("Server WS:", data);
 
 		// ===== JOINED =====
 		if (data.type === "joined") {

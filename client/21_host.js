@@ -1,5 +1,6 @@
-function host_handleMessage (playerNumber, data){
+function host_handleMessage (playerNumber, e){
 // log message xxx delete in prod
+	const data = JSON.parse(e.data);
 	console.log("Data message:", data);
 // how host handles messages
 	if (data.type === "move") {

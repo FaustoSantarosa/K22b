@@ -24,6 +24,16 @@ const screenW = 400;
 const screenH = 400;
 
 
+//
+
+const RELIABLE_CONFIG = {
+	ordered: true
+};
+const FAST_CONFIG = {
+	ordered: false,
+	maxRetransmits: 0
+};
+
 
 // =======================================
 const dot = { x: screenW/2 -5, y: screenH/2 -5 };
