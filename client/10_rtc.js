@@ -81,8 +81,10 @@ async function handleSignal({ from, signal }) {
 			signal: answer
 		}));
 	} else if (signal.type === "answer") {
+		console.log("Answer received from "+ from);
 		await pc.setRemoteDescription(signal);
 	} else if (signal.candidate) {
+		console.log("Candidate received from "+ from);
 		await pc.addIceCandidate(signal);
 	}
 }

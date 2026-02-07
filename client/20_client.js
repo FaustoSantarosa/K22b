@@ -27,7 +27,8 @@ function join(room, password) {
 			playerIndex = data.player;
 			isHost = data.host;
 			peerList = data.peers;
-			console.log("Joined as Player " + playerIndex, localId, "host:", isHost);
+			if (isHost)	console.log("Joined as HOST P"  + playerIndex + ".");
+			else		console.log("Joined as GUEST P" + playerIndex + ".");
 			for (const p of peerList) {
 				if (p.player == 0 ) {hostId = p.id};
 				createPeer(p.id, p.player, isHost);
@@ -42,7 +43,7 @@ function join(room, password) {
 		if (data.type === "peer-joined" && isHost) {
 			const peerId = data.id;
 			const playerNumber = data.player;
-			console.log("New peer joined:", peerId);
+			console.log("GUEST P" + playerNumber + " joined the room.");
 			createPeer(peerId, playerNumber, true);
 			await makeOffer(peerId, playerNumber);
 			return;
