@@ -32,7 +32,7 @@ function join(room, password) {
 			else		console.log("Joined as GUEST P" + playerIndex + ".");
 			for (const p of peerList) {
 				if (p.player == 0 ) {hostId = p.id};
-				createPeer(p.id, p.player, isHost);
+				createPeer(p.id, p.player);
 				if (isHost) {
 					await makeOffer(p.id, p.player);
 				}
@@ -45,7 +45,7 @@ function join(room, password) {
 			const peerId = data.id;
 			const playerNumber = data.player;
 			console.log("GUEST P" + playerNumber + " joined the room.");
-			createPeer(peerId, playerNumber, true);
+			createPeer(peerId, playerNumber);
 			await makeOffer(peerId, playerNumber);
 			return;
 		}
@@ -77,8 +77,6 @@ function join(room, password) {
 
 // ================== INPUT ==================
 document.addEventListener("keydown", (e) => {
-	//if (!checkChannels()) return;
-
 	const move = { x: 0, y: 0 };
 
 	if (e.code === "KeyW"

@@ -1,7 +1,8 @@
-function createPeer(peerId, playerNumber, initiator) {
+function createPeer(peerId, playerNumber) {
 	console.log("Creating P" + playerNumber + " peer...")
 	const pc = new RTCPeerConnection();
 	peerIds[playerNumber] = peerId;
+	
 	pc.onicecandidate = e => {
 		if (e.candidate) {
 			console.log("Sending candidate signal to peer...")
@@ -77,7 +78,7 @@ function reliableChannel(playerNumber, channel) {
 			guest_handleMilestone(e)
 		}
 	};
-	peers[playerNumber].channel = channel;
+	//peers[playerNumber].channel = channel;
 }
 
 function fastChannel(playerNumber, channel) {
@@ -93,7 +94,7 @@ function fastChannel(playerNumber, channel) {
 			guest_handleBroadcast(e)
 		}
 	};
-	peers[playerNumber].channel = channel;
+	//peers[playerNumber].channel = channel;
 }
 
 async function handleSignal({ from, signal }) {
