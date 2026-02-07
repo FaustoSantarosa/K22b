@@ -18,6 +18,7 @@ function guest_handleMilestone(e){
 		console.log("World milestone:", data);
 		playerIndex  = data.player;
 		playersTotal = data.total;
+		guest_sendWarning("init", true);
 	}
 
 }
@@ -36,12 +37,12 @@ function guest_sendReport (typ, move) {
 	}
 }
 
-function guest_sendWarning (typ, move) {
+function guest_sendWarning (typ, warn) {
 	console.log("Sending waring...")
 	const msg = JSON.stringify({
 		player: playerIndex,
 		type: typ,
-		move
+		warn: warn
 	});
 	const peer = peers[0];
 	if (peer.reliable && peer.reliable.readyState === "open") {

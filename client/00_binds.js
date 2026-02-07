@@ -18,6 +18,7 @@ let peerIds = [];
 let playersTotal = 1;
 let k22b;
 
+const playersReady = [];
 const players = [];
 
 //

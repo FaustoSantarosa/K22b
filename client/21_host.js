@@ -14,11 +14,9 @@ function host_handleReport (playerNumber, e){
 function host_handleWarning (playerNumber, e){
 	const data = JSON.parse(e.data);
 	console.log("Warning:", data);
-	if (data.type === "move") {
-		players[playerNumber].x += data.move.x;
-		players[playerNumber].y += data.move.y;
-		checkWin();
-		host_sendMilestone("players", players);
+	if (data.type === "init") {
+		playersReady[playerNumber] = data.warn;
+		if (playersReady.every(Boolean)) startGame();
 	}
 }
 
@@ -84,6 +82,7 @@ function initGame() {
 		j++;
 	});
 	playersTotal = j+1;
+	playersReady.length = playersTotal;
 	j = 0;
 	peers.forEach((p) => {
 		j++;
@@ -108,9 +107,10 @@ function initGame() {
 		randomIndex: 1 // 8 bits _range 0-255
 	}
 
-	setTimeout(() => {
-		host_sendBroadcast("players", players);
-	}, 2000);
-	
-	console.log("Game initialized");
+	console.log("Initializing game...");
+}
+
+function startGame(){
+	host_sendBroadcast("players", players);
+	console.log(">> Game started.")
 }
