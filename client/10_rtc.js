@@ -19,7 +19,7 @@ function createPeer(peerId, playerNumber, initiator) {
 		console.log(begi + "P" + playerNumber +" "+ pc.connectionState + stat);
 	};
 	peers[playerNumber] = { pc };
-	if (initiator) {
+	if (isHost) {
 		const channel_reliable	= pc.createDataChannel("reliable", RELIABLE_CONFIG);
 		const channel_fast		= pc.createDataChannel("fast", FAST_CONFIG);
 		channel_fast.binaryType = "arraybuffer";
@@ -33,15 +33,15 @@ function createPeer(peerId, playerNumber, initiator) {
 	} else {
 		pc.ondatachannel = e => {
 			const channel = e.channel;
-			channel.binaryType = "arraybuffer";
 
 			if (channel.label === "reliable") {
-				reliableChannel(peerId, playerNumber, channel);
+				reliableChannel(playerNumber, channel);
 				peers[playerNumber].reliable = channel;
 
 			} else if (channel.label === "fast") {
-				fastChannel(peerId, playerNumber, channel);
+				fastChannel(playerNumber, channel);
 				peers[playerNumber].fast = channel;
+				peers[playerNumber].fast.binaryType = "arraybuffer";
 
 			} else {
 				console.warn("Unknown data channel:", channel.label);
@@ -64,7 +64,7 @@ async function makeOffer(peerId, playerNumber) {
 	}));
 }
 
-function reliableChannel(peerId, playerNumber, channel) {
+function reliableChannel(playerNumber, channel) {
 	console.log("Setting up reliable channel to P" + playerNumber +"...")
 	channel.onopen = () => {
 		console.log(">> Reliable DC open with P" + playerNumber +".");
@@ -80,7 +80,7 @@ function reliableChannel(peerId, playerNumber, channel) {
 	peers[playerNumber].channel = channel;
 }
 
-function fastChannel(peerId, playerNumber, channel) {
+function fastChannel(playerNumber, channel) {
 	console.log("Setting up fast channel to P" + playerNumber +"...")
 	channel.onopen = () => {
 		console.log(">> Fast DC open with P" + playerNumber +".");
