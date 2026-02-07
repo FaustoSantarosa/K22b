@@ -1,30 +1,29 @@
+//=============================================
 function host_handleReport (playerNumber, e){
-// log message xxx delete in prod
+	//if (Math.random() > 0.5) return;
 	const data = JSON.parse(e.data);
-	console.log("Data message:", data);
-// how host handles messages
+	//console.log("Report:", data);
 	if (data.type === "move") {
 		players[playerNumber].x += data.move.x;
 		players[playerNumber].y += data.move.y;
 		checkWin();
-		broadcast("players", players);
+		host_sendBroadcast("players", players);
 	}
 }
 
 function host_handleWarning (playerNumber, e){
-// log message xxx delete in prod
 	const data = JSON.parse(e.data);
-	console.log("Data message:", data);
-// how host handles messages
+	console.log("Warning:", data);
 	if (data.type === "move") {
 		players[playerNumber].x += data.move.x;
 		players[playerNumber].y += data.move.y;
 		checkWin();
-		broadcast("players", players);
+		host_sendMilestone("players", players);
 	}
 }
+
 function host_sendBroadcast(array_name, array) {
-	console.log("Broadcasting...")
+	//console.log("Broadcasting...")
 	const msg = JSON.stringify({
 		type: "state",
 		[array_name]: array
@@ -39,7 +38,7 @@ function host_sendBroadcast(array_name, array) {
 function host_sendMilestone(array_name, array) {
 	console.log("Setting milestone...")
 	const msg = JSON.stringify({
-		type: "state",
+		type: "milestone",
 		[array_name]: array
 	});
 	peers.forEach(peer => {
@@ -48,7 +47,12 @@ function host_sendMilestone(array_name, array) {
 		}
 	});
 }
-
+function host_sendWorld(peer, msg){
+	if (peer.reliable && peer.reliable.readyState === "open") {
+		peer.reliable.send(msg);
+	}
+}
+//=============================================
 
 // ========= host stuff============
 function checkWin() {
@@ -72,6 +76,27 @@ function checkChannels(){
 // ================== GAME ==================
 function initGame() {
 	if (!canStart) return;
+	let i = 0;
+	peers.forEach((p) => {
+		i++;
+	});
+	playersTotal = i;
+	i = 0;
+	peers.forEach((p) => {
+		i++;
+		host_sendWorld(p, "You are P" + i + " of " + playersTotal + ".");
+	});
+	return;
+
+	let k22b = {
+		tick: 0, // 16 bits _range: 0-65535
+		state: 1, // 3 bits _range: 0-7
+		randomIndex: 1 // 8 bits _range 0-255
+	}
+	let players = [];
+	for (i=0; i<playersTotal; i++){
+		players.push(new Player(i*3,0,0,0,63,63,63));
+	}
 	const corners = [
 		{ x: 0,				y: 0 },
 		{ x: screenW-20,	y: 0 },

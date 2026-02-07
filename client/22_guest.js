@@ -1,8 +1,8 @@
+//=============================================
 function guest_handleBroadcast(e){
-// log message xxx delete in prod
+	//if (Math.random() > 0.5) return;
 	const data = JSON.parse(e.data);
-	console.log("Broadcast:", data);
-// how guest handles messages
+	//console.log("Broadcast:", data);
 	if (data.type === "state") {
 		players.length = 0; // resets players data
 		data.players.forEach(p => players.push(p)); //update players data
@@ -11,10 +11,8 @@ function guest_handleBroadcast(e){
 }
 
 function guest_handleMilestone(e){
-// log message xxx delete in prod
 	const data = JSON.parse(e.data);
 	console.log("Milestone:", data);
-// how guest handles messages
 	if (data.type === "state") {
 		players.length = 0; // resets players data
 		data.players.forEach(p => players.push(p)); //update players data
@@ -23,7 +21,7 @@ function guest_handleMilestone(e){
 }
 
 function guest_sendReport (typ, move) {
-	console.log("Sending report...")
+	//console.log("Sending report...")
 	const msg = JSON.stringify({
 		player: playerIndex,
 		type: typ,
@@ -49,3 +47,4 @@ function guest_sendWarning (typ, move) {
 		peer.reliable.send(msg);
 	}
 }
+//=============================================
