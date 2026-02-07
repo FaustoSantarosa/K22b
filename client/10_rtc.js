@@ -20,11 +20,6 @@ function createPeer(peerId, playerNumber, initiator) {
 	};
 	peers[playerNumber] = { pc };
 	if (initiator) {
-		/*
-		const channel = pc.createDataChannel("game");
-		setupChannel(peerId, playerNumber, channel);
-		peers[playerNumber] = { pc, channel };
-		*/
 		const channel_reliable	= pc.createDataChannel("reliable", RELIABLE_CONFIG);
 		const channel_fast		= pc.createDataChannel("fast", FAST_CONFIG);
 		reliableChannel	(peerId, playerNumber, channel_reliable);
@@ -35,14 +30,6 @@ function createPeer(peerId, playerNumber, initiator) {
 			fast: channel_fast
 		};
 	} else {
-		/*
-		pc.ondatachannel = e => {
-			setupChannel(peerId, playerNumber, e.channel);
-			peers[playerNumber].channel = e.channel;
-		};
-		peers[playerNumber] = { pc };
-		peers[playerNumber] = { pc };
-		*/
 		pc.ondatachannel = e => {
 			const channel = e.channel;
 
@@ -83,9 +70,9 @@ function reliableChannel(peerId, playerNumber, channel) {
 	};
 	channel.onmessage = e => {
 		if (isHost) {
-			host_handleWarning(playerNumber, msg);
+			host_handleWarning(playerNumber, e);
 		} else {
-			guest_handleMilestone(msg)
+			guest_handleMilestone(e)
 		}
 	};
 	peers[playerNumber].channel = channel;
@@ -99,30 +86,14 @@ function fastChannel(peerId, playerNumber, channel) {
 	};
 	channel.onmessage = e => {
 		if (isHost) {
-			host_handleReport(playerNumber, msg);
+			host_handleReport(playerNumber, e);
 		} else {
-			guest_handleBroadcast(msg)
+			guest_handleBroadcast(e)
 		}
 	};
 	peers[playerNumber].channel = channel;
 }
-/*
-function setupChannel(peerId, playerNumber, channel) {
-	console.log("Setting up channel to P" + playerNumber +"...")
-	channel.onopen = () => {
-		console.log(">>DC open with P" + playerNumber +".");
-		checkCanStart();
-	};
-	channel.onmessage = e => {
-		if (isHost) {
-			host_handleMessage(playerNumber, msg);
-		} else {
-			guest_handleMessage(msg)
-		}
-	};
-	peers[playerNumber].channel = channel;
-}
-*/
+
 async function handleSignal({ from, signal }) {
 	console.log("Handling signal...")
 	let pc;
