@@ -78,15 +78,15 @@ function checkChannels(){
 // ================== GAME ==================
 function initGame() {
 	if (!canStart) return;
-	let i = 0;
+	let j = 0;
 	peers.forEach((p) => {
-		i++;
+		j++;
 	});
-	playersTotal = i+1;
-	i = 0;
+	playersTotal = j+1;
+	j = 0;
 	peers.forEach((p) => {
-		i++;
-		host_sendWorld(p, i);
+		j++;
+		host_sendWorld(p, j);
 	});
 
 	const corners = [
