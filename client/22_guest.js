@@ -2,7 +2,7 @@
 function guest_handleBroadcast(e){
 	//if (Math.random() > 0.5) return;
 	//console.log("Broadcast received.");
-	const { k22bArray, playersArray } = unpackBroadcast(buffer);
+	const { k22bArray, playersArray } = unpackBroadcast(e.data);
 	Object.assign(k22b, k22bArray);
 	players.length = 0;
 	for (const p of playersArray) {
