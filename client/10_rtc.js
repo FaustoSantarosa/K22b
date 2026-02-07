@@ -4,12 +4,13 @@ function createPeer(peerId, playerNumber, initiator) {
 	peerIds[playerNumber] = peerId;
 	pc.onicecandidate = e => {
 		if (e.candidate) {
-		socket.send(JSON.stringify({
-			type: "signal",
-			from: localId,
-			to: peerId,
-			signal: e.candidate
-		}));
+			console.log("Sending signal to peer...")
+			socket.send(JSON.stringify({
+				type: "signal",
+				from: localId,
+				to: peerId,
+				signal: e.candidate
+			}));
 		}
 	};
 	pc.onconnectionstatechange = () => {
@@ -44,9 +45,9 @@ async function makeOffer(peerId, playerNumber) {
 }
 
 function setupChannel(peerId, playerNumber, channel) {
-	console.log("Setting up channel to P" +playerNumber+ "...")
+	console.log("Setting up channel to P" + playerNumber + "...")
 	channel.onopen = () => {
-		console.log("DC open with", peerId);
+		console.log("DC open with P" + playerNumber + ".");
 		checkCanStart();
 	};
 	channel.onmessage = e => {
@@ -64,13 +65,16 @@ function setupChannel(peerId, playerNumber, channel) {
 async function handleSignal({ from, signal }) {
 	console.log("handling signal...")
 	let pc;
+	let pj;
 	for (i=0; i< peers.length; i++){
 		console.log(peerIds[i], from);
 		if (peerIds[i] == from) {
 			pc = peers[i].pc;
+			pj = i;
 		}
 	}
 	if (signal.type === "offer") {
+		console.log("Answer received from P"+ pj);
 		await pc.setRemoteDescription(signal);
 		const answer = await pc.createAnswer();
 		await pc.setLocalDescription(answer);
@@ -81,7 +85,7 @@ async function handleSignal({ from, signal }) {
 			signal: answer
 		}));
 	} else if (signal.type === "answer") {
-		console.log("Answer received from "+ from);
+		console.log("Answer received from GUEST"+ from);
 		await pc.setRemoteDescription(signal);
 	} else if (signal.candidate) {
 		console.log("Candidate received from "+ from);
