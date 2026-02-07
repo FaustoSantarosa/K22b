@@ -2,7 +2,10 @@
 function guest_handleBroadcast(e){
 	//if (Math.random() > 0.5) return;
 	//console.log("Broadcast:", data);
-	players = unpackBroadcast(e);
+	players.length = 0;
+	unpackBroadcast(e).forEach((p) => {
+		players.push(p);
+	});
 
 }
 
