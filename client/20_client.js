@@ -110,6 +110,6 @@ function handleMove(index, input) {
 	if (isHost){
 		host_sendBroadcast();
 	} else {
-		guest_sendReport();
+		guest_sendReport(input);
 	}
 }

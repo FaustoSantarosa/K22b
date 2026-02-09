@@ -27,9 +27,9 @@ function guest_handleMilestone(e){
 
 }
 //=================  S E N D  =================
-function guest_sendReport () {
+function guest_sendReport (inp) {
 	//console.log("Sending report...")
-	const msg = packReport();
+	const msg = packReport(inp);
 	const peer = peers[0];
 	if (peer.fast && peer.fast.readyState === "open") {
 		peer.fast.send(msg);
