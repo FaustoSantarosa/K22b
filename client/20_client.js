@@ -1,7 +1,7 @@
 // ================== JOIN ==================
 function join(room, password) {
 	console.log("Connecting WebSocket...");
-	console.log("Since server is free this might take a while.");
+	console.log("Server is free so this might take a while.");
 
 	socket = new WebSocket(SERVER_URL);
 
@@ -78,6 +78,7 @@ function join(room, password) {
 // ================== INPUT ==================
 document.addEventListener("keydown", (e) => {
 	if (k22b.state == 0) return;
+	const inputs = new Inputs();
 
 	if (e.code === "KeyW"
 	||  e.key  === "ArrowUp"){
@@ -96,7 +97,6 @@ document.addEventListener("keydown", (e) => {
 		inputs.d = true;
 	}
 	handleMove(playerIndex, inputs);
-	inputs = new Inputs({});
 });
 
 function handleMove(index, input) {

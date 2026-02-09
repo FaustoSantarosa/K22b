@@ -25,6 +25,20 @@ class Inputs {
 		this.i = i; // 1 bits _bool
 		this.e = e; // 1 bits _bool
 	}
+	reset(){
+		this.w = false;
+		this.s = false;
+		this.a = false;
+		this.d = false;
+		this.q = false;
+		this.o = false;
+		this.j = false;
+		this.k = false;
+		this.l = false;
+		this.u = false;
+		this.i = false;
+		this.e = false;
+	}
 }
 
 class BitWriter {
