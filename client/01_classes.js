@@ -27,7 +27,6 @@ class Inputs {
 	}
 }
 
-
 class BitWriter {
 	constructor(sizeBytes) {
 		this.buffer = new Uint8Array(sizeBytes);

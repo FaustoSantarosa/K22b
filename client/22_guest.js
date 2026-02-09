@@ -22,7 +22,7 @@ function guest_handleMilestone(e){
 		console.log("World milestone:", data);
 		playerIndex  = data.player;
 		playersTotal = data.total;
-		inputs = new Inputs();
+		inputs = new Inputs({});
 		guest_sendWarning("init", true);
 	}
 
