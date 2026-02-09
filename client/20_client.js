@@ -77,7 +77,8 @@ function join(room, password) {
 
 // ================== INPUT ==================
 document.addEventListener("keydown", (e) => {
-
+	if (k22b.state == 0) return;
+	
 	if (e.code === "KeyW"
 	||  e.key  === "ArrowUp"){
 		inputs.w = true;

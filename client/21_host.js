@@ -102,7 +102,7 @@ function initGame() {
 	for (i=0; i < playersTotal; i++){
 		players.push(new Player(corners[i]));
 	}
-
+	k22b.state = 1;
 	console.log("Initializing game...");
 }
 
