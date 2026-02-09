@@ -11,7 +11,6 @@ let socketReady = false;
 const peers = []; 
 let localId;
 let hostId;
-let inputs;
 let isHost = false;
 let canStart = false;
 let playerIndex = 0;
