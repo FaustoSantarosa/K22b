@@ -11,6 +11,7 @@ let socketReady = false;
 const peers = []; 
 let localId;
 let hostId;
+let inputs;
 let isHost = false;
 let canStart = false;
 let playerIndex = 0;
@@ -29,7 +30,7 @@ const k22b = {
 
 const screenW = 400;
 const screenH = 400;
-
+const speed = 5;
 
 //
 

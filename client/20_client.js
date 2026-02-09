@@ -77,30 +77,36 @@ function join(room, password) {
 
 // ================== INPUT ==================
 document.addEventListener("keydown", (e) => {
-	const move = { x: 0, y: 0 };
 
 	if (e.code === "KeyW"
-	||  e.key  === "ArrowUp")
-		move.y = -5;
-	if (e.code === "KeyS"
-	||  e.key  === "ArrowDown")
-		move.y =  5;
-	if (e.code === "KeyA"
-	||  e.key  === "ArrowLeft")
-		move.x = -5;
-	if (e.code === "KeyD"
-	||  e.key  === "ArrowRight")
-		move.x =  5;
-
-	if (move.x || move.y) {
-		handleMove(move);
+	||  e.key  === "ArrowUp"){
+		inputs.w = true;
 	}
+	if (e.code === "KeyS"
+	||  e.key  === "ArrowDown"){
+		inputs.s = true;
+	}
+	if (e.code === "KeyA"
+	||  e.key  === "ArrowLeft"){
+		inputs.a = true;
+	}
+	if (e.code === "KeyD"
+	||  e.key  === "ArrowRight"){
+		inputs.d = true;
+	}
+	handleMove(playerIndex, inputs);
+	inputs = new Inputs();
 });
 
-function handleMove(move) {
+function handleMove(index, input) {
+	const move = { x: 0, y: 0 };
+	if (input.w) move.y = -speed;
+	if (input.s) move.y =  speed;
+	if (input.a) move.x = -speed;
+	if (input.d) move.x =  speed;
+	players[index].x += move.x;
+	players[index].y += move.y;
 	if (isHost){
-		players[playerIndex].x += move.x;
-		players[playerIndex].y += move.y;
 		host_sendBroadcast();
 	} else {
 		guest_sendReport();

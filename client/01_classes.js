@@ -9,6 +9,23 @@ class Player {
 		this.temperature = t;	// 6 bits _range: 0-63
 	}
 }
+class Inputs {
+	constructor({w=false, s=false, a=false, d=false, q=false, o=false,
+		j=false, k=false, l=false, u=false, i=false, e=false}){
+		this.w = w; // 1 bits _bool
+		this.s = s; // 1 bits _bool
+		this.a = a; // 1 bits _bool
+		this.d = d; // 1 bits _bool
+		this.q = q; // 1 bits _bool
+		this.o = o; // 1 bits _bool
+		this.j = j; // 1 bits _bool
+		this.k = k; // 1 bits _bool
+		this.l = l; // 1 bits _bool
+		this.u = u; // 1 bits _bool
+		this.i = i; // 1 bits _bool
+		this.e = e; // 1 bits _bool
+	}
+}
 
 
 class BitWriter {

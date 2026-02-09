@@ -1,4 +1,4 @@
-//=============================================
+//===============  H A N D L E  ===============
 function guest_handleBroadcast(e){
 	//if (Math.random() > 0.5) return;
 	//console.log("Broadcast received.");
@@ -8,7 +8,6 @@ function guest_handleBroadcast(e){
 			: new Uint8Array(e.data);
 
 	const { k22bArray, playersArray } = unpackBroadcast(buffer);
-	console.log(playersArray);
 	Object.assign(k22b, k22bArray);
 	players.length = 0;
 	for (const p of playersArray) {
@@ -23,23 +22,19 @@ function guest_handleMilestone(e){
 		console.log("World milestone:", data);
 		playerIndex  = data.player;
 		playersTotal = data.total;
+		inputs = new Inputs();
 		guest_sendWarning("init", true);
 	}
 
 }
-
-function guest_sendReport (typ, move) {
+//=================  S E N D  =================
+function guest_sendReport () {
 	//console.log("Sending report...")
-	const msg = JSON.stringify({
-		player: playerIndex,
-		type: typ,
-		move
-	});
+	const msg = packReport();
 	const peer = peers[0];
 	if (peer.fast && peer.fast.readyState === "open") {
-		console.log(peer)
 		peer.fast.send(msg);
-	}
+	}	
 }
 
 function guest_sendWarning (typ, warn) {

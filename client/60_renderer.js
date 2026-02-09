@@ -7,6 +7,6 @@ function draw() {
 
 	ctx.fillStyle = "blue";
 	players.forEach(p => ctx.fillRect(p.x, p.y, 20, 20));
-
+	
 	requestAnimationFrame(draw);
 }

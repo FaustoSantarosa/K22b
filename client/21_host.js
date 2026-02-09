@@ -1,14 +1,14 @@
-//=============================================
+//===============  H A N D L E  ===============
 function host_handleReport (playerNumber, e){
 	//if (Math.random() > 0.5) return;
-	const data = JSON.parse(e.data);
-	//console.log("Report:", data);
-	if (data.type === "move") {
-		players[playerNumber].x += data.move.x;
-		players[playerNumber].y += data.move.y;
-		checkWin();
-		host_sendBroadcast("players", players);
-	}
+	//console.log("P" playerNumber + " report received.");
+	const buffer =
+		e.data instanceof Uint8Array
+			? e.data
+			: new Uint8Array(e.data);
+
+	const input = unpackReport(buffer);
+	handleMove(playerNumber, input);
 }
 
 function host_handleWarning (playerNumber, e){
@@ -19,9 +19,9 @@ function host_handleWarning (playerNumber, e){
 		if (playersReady.every(Boolean)) startGame();
 	}
 }
-
+//=================  S E N D  =================
 function host_sendBroadcast() {
-	console.log("Broadcasting...")
+	//console.log("Broadcasting...")
 	const msg = packBroadcast();
 	peers.forEach(peer => {
 		if (peer.fast && peer.fast.readyState === "open") {
@@ -42,6 +42,7 @@ function host_sendMilestone(array_name, array) {
 		}
 	});
 }
+
 function host_sendWorld(peer, i){
 	console.log("Sending World milestone...")
 	const msg = JSON.stringify({
@@ -76,6 +77,7 @@ function checkChannels(){
 
 // ================== GAME ==================
 function initGame() {
+	if (!isHost) return;
 	if (!canStart) return;
 	let j = 0;
 	peers.forEach((p) => {

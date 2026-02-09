@@ -48,3 +48,32 @@ function unpackBroadcast(buffer) {
 
 	return { k22bArray, playersArray };
 }
+
+function packReport() {
+	const totalBits = 12;
+	const totalBytes = Math.ceil(totalBits / 8);
+
+	const writer = new BitWriter(totalBytes);
+
+	writer.write(inputs.w, 1);
+	writer.write(inputs.s, 1);
+	writer.write(inputs.a, 1);
+	writer.write(inputs.d, 1);
+	//...
+
+	return writer.getBuffer();
+}
+
+function unpackReport(buffer) {
+	const reader = new BitReader(buffer);
+
+	const input = {
+		w: reader.read(1),
+		s: reader.read(1),
+		a: reader.read(1),
+		d: reader.read(1)
+		//...
+	};
+
+	return input;
+}
